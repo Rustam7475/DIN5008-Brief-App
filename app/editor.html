@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brief bearbeiten — DIN 5008</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="html2canvas.min.js" defer></script>
+    <script src="jspdf.umd.min.js" defer></script>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar">
+    <div class="navbar-left-group">
+        <button id="btn-back" class="nav-back-btn" data-i18n="nav_back">← Zurück</button>
+        <a href="index.html" class="navbar-brand">
+            <span class="navbar-brand-icon">📄</span>
+            <span class="navbar-brand-text">DIN 5008 Brief-App</span>
+        </a>
+    </div>
+    <div class="navbar-nav">
+        <a href="index.html" class="nav-link">
+            <span class="nav-link-icon">🏠</span>
+            <span data-i18n="nav_start">Start</span>
+        </a>
+        <a href="letters.html" class="nav-link">
+            <span class="nav-link-icon">📂</span>
+            <span data-i18n="nav_letters">Meine Briefe</span>
+        </a>
+        <a href="profil.html" class="nav-link">
+            <span class="nav-link-icon">👤</span>
+            <span data-i18n="nav_profile">Profil</span>
+        </a>
+    </div>
+    <div class="navbar-actions">
+        <button class="btn-icon btn-hint-lang" title="Подсказки: Русский → English">🇷🇺</button>
+        <button id="btn-theme" class="btn-icon" title="Thema wechseln / Сменить тему">🌙</button>
+    </div>
+</nav>
+
+<!-- ================= TOOLBAR ================= -->
+<header class="toolbar">
+    <div class="toolbar-left">
+        <h1 id="editor-title" data-i18n="editor_title">Geschäftsbrief DIN 5008</h1>
+        <span id="save-indicator" class="save-indicator"></span>
+    </div>
+    <div class="toolbar-center">
+        <div class="form-toggle">
+            <button id="btn-form-a" class="toggle-btn" data-form="A" data-i18n-title="title_form_a" title="Form A — hohes Anschriftfeld (27mm)">Form A</button>
+            <button id="btn-form-b" class="toggle-btn active" data-form="B" data-i18n-title="title_form_b" title="Form B — tiefes Anschriftfeld (45mm)">Form B</button>
+            <button id="btn-form-c4" class="toggle-btn" data-form="C4" data-i18n-title="title_form_c4" title="Umschlag C4 — A4 ohne Falten">C4 ✉</button>
+        </div>
+    </div>
+    <div class="toolbar-right">
+        <button id="btn-clear" class="action-btn btn-secondary" data-i18n="btn_reset">↺ Zurücksetzen</button>
+        <button id="btn-email" class="action-btn btn-secondary" data-i18n="btn_email" data-i18n-title="title_email" title="Per E-Mail senden">✉ E-Mail</button>
+        <button id="btn-pdf" class="action-btn btn-primary" data-i18n="btn_pdf" data-i18n-title="title_pdf" title="Als PDF speichern">PDF ↓</button>
+        <button id="btn-print" class="action-btn btn-secondary" data-i18n="btn_print">🖨 Drucken</button>
+    </div>
+</header>
+
+<!-- ================= MAIN LAYOUT ================= -->
+<main class="app-layout">
+
+    <!-- LEFT: Input Form -->
+    <aside class="input-panel">
+
+        <!-- Letter management buttons -->
+        <div class="letter-actions">
+            <button id="btn-letters" class="letter-action-btn" data-i18n="btn_my_letters_icon">📂 Meine Briefe</button>
+            <button id="btn-save-as" class="letter-action-btn btn-save" data-i18n="btn_save_icon">💾 Speichern</button>
+        </div>
+
+        <!-- Absender (Sender) -->
+        <section class="form-section">
+            <h2 class="section-title">Absender <span class="ru" data-en="Sender">Отправитель</span></h2>
+            <span class="hint" data-hint-ru="Ваши данные — тот, кто отправляет письмо" data-hint-en="Your details — the person/company sending the letter" data-hint-de="Ihre Absenderdaten — wer den Brief versendet">Ваши данные — тот, кто отправляет письмо</span>
+            <div class="form-group">
+                <label for="sender-name">Name / Firma <span class="ru" data-en="Name / Company">Имя / Фирма</span></label>
+                <div class="toggle-row">
+                    <input type="checkbox" id="show-letterhead" checked>
+                    <label for="show-letterhead" class="toggle-label">Im Briefkopf anzeigen <span class="ru" data-en="Show in letterhead">Показать в шапке</span></label>
+                </div>
+                <input type="text" id="sender-name" placeholder="Max Mustermann GmbH">
+            </div>
+            <div class="form-group">
+                <label for="sender-street">Straße, Nr. <span class="ru" data-en="Street, No.">Улица, №</span></label>
+                <input type="text" id="sender-street" placeholder="Musterstraße 1">
+            </div>
+            <div class="form-row">
+                <div class="form-group small">
+                    <label for="sender-zip">PLZ <span class="ru" data-en="Zip code">Индекс</span></label>
+                    <input type="text" id="sender-zip" placeholder="12345">
+                </div>
+                <div class="form-group">
+                    <label for="sender-city">Ort <span class="ru" data-en="City">Город</span></label>
+                    <input type="text" id="sender-city" placeholder="Musterstadt">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="sender-phone">Telefon <span class="ru" data-en="Phone">Телефон</span></label>
+                <input type="text" id="sender-phone" placeholder="+49 123 456789">
+            </div>
+            <div class="form-group">
+                <label for="sender-email">E-Mail</label>
+                <input type="email" id="sender-email" placeholder="info@mustermann.de">
+            </div>
+            <div class="form-group">
+                <label for="sender-web">Website <span class="ru" data-en="Website">Сайт</span></label>
+                <input type="text" id="sender-web" placeholder="www.mustermann.de">
+            </div>
+        </section>
+
+        <!-- Empfänger (Recipient) -->
+        <section class="form-section">
+            <div class="section-title-row">
+                <h2 class="section-title">Empfänger <span class="ru" data-en="Recipient">Получатель</span></h2>
+                <div class="section-title-actions">
+                    <button type="button" id="btn-from-contacts" class="mini-btn" title="Aus Kontakten / Из контактов">📋</button>
+                    <button type="button" id="btn-save-contact" class="mini-btn" title="Kontakt speichern / Сохранить контакт">💾</button>
+                </div>
+            </div>
+            <span class="hint" data-hint-ru="Кому адресовано письмо" data-hint-en="Who the letter is addressed to" data-hint-de="An wen der Brief adressiert ist">Кому адресовано письмо</span>
+            <div class="form-group">
+                <label for="recipient-zusatz">Zusatz (optional) <span class="ru" data-en="Note (optional)">Примечание (необяз.)</span></label>
+                <span class="hint" data-hint-ru="Напр. «Einschreiben» (заказное), «Persönlich» (лично). Можно оставить пустым" data-hint-en="E.g. 'Einschreiben' (registered), 'Persönlich' (personal). Can be left empty" data-hint-de="Z.B. Einschreiben, Persönlich. Kann leer bleiben">Напр. «Einschreiben» (заказное), «Persönlich» (лично). Можно оставить пустым</span>
+                <input type="text" id="recipient-zusatz" placeholder="z. B. Einschreiben, Persönlich">
+            </div>
+            <div class="form-group">
+                <label for="recipient-company">Firma / Organisation <span class="ru" data-en="Company / Organisation">Фирма / Организация</span></label>
+                <input type="text" id="recipient-company" placeholder="Beispiel AG">
+            </div>
+            <div class="form-group">
+                <label for="recipient-anrede">Anrede <span class="ru" data-en="Address salutation">Форма обращения в адресе</span></label>
+                <span class="hint" data-hint-ru="Как обращаться на конверте: Herrn = Господину, Frau = Госпоже" data-hint-en="Salutation on envelope: Herrn = Mr., Frau = Mrs." data-hint-de="Anrede auf dem Umschlag: Herrn oder Frau">Как обращаться на конверте: Herrn = Господину, Frau = Госпоже</span>
+                <select id="recipient-anrede">
+                    <option value="">— Ohne / Without —</option>
+                    <option value="Herrn">Herrn</option>
+                    <option value="Frau">Frau</option>
+                    <option value="Herrn und Frau">Herrn und Frau</option>
+                    <option value="Firma">Firma</option>
+                    <option value="Familie">Familie</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="recipient-name">Name <span class="ru" data-en="Name">Имя</span></label>
+                <input type="text" id="recipient-name" placeholder="Dr. Erika Musterfrau">
+            </div>
+            <div class="form-group">
+                <label for="recipient-street">Straße, Nr. <span class="ru" data-en="Street, No.">Улица, №</span></label>
+                <input type="text" id="recipient-street" placeholder="Beispielweg 42">
+            </div>
+            <div class="form-row">
+                <div class="form-group small">
+                    <label for="recipient-zip">PLZ <span class="ru" data-en="Zip code">Индекс</span></label>
+                    <input type="text" id="recipient-zip" placeholder="54321">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-city">Ort <span class="ru" data-en="City">Город</span></label>
+                    <input type="text" id="recipient-city" placeholder="Beispielstadt">
+                </div>
+            </div>
+        </section>
+
+        <!-- Briefkopf-Infos -->
+        <section class="form-section">
+            <h2 class="section-title">Informationsblock <span class="ru" data-en="Info block">Информационный блок</span></h2>
+            <span class="hint" data-hint-ru="Служебные данные переписки, размещаются справа на листе. Пустые поля не отображаются" data-hint-en="Reference data, placed on the right side. Empty fields are hidden" data-hint-de="Geschäftsdaten rechts auf dem Blatt. Leere Felder werden ausgeblendet">Служебные данные переписки, размещаются справа на листе. Пустые поля не отображаются</span>
+            <div class="form-group">
+                <label for="info-date">Datum <span class="ru" data-en="Date">Дата</span></label>
+                <span class="hint" data-hint-ru="Дата написания письма" data-hint-en="Date of the letter" data-hint-de="Datum des Briefes">Дата написания письма</span>
+                <input type="text" id="info-date" placeholder="14. März 2026">
+            </div>
+            <div class="form-group">
+                <label for="info-ihr-zeichen">Ihr Zeichen <span class="ru" data-en="Your ref.">Ваш номер</span></label>
+                <span class="hint" data-hint-ru="Регистрационный номер из письма, на которое вы отвечаете (номер дела получателя)" data-hint-en="Reference number from the letter you are replying to (recipient's case number)" data-hint-de="Aktenzeichen aus dem Schreiben, auf das Sie antworten">Регистрационный номер из письма, на которое вы отвечаете (номер дела получателя)</span>
+                <input type="text" id="info-ihr-zeichen" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-ihr-schreiben">Ihr Schreiben vom <span class="ru" data-en="Your letter of">Ваше письмо от</span></label>
+                <span class="hint" data-hint-ru="Дата письма, на которое вы отвечаете" data-hint-en="Date of the letter you are replying to" data-hint-de="Datum des Schreibens, auf das Sie antworten">Дата письма, на которое вы отвечаете</span>
+                <input type="text" id="info-ihr-schreiben" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-unser-zeichen">Unser Zeichen <span class="ru" data-en="Our ref.">Наш номер</span></label>
+                <span class="hint" data-hint-ru="Ваш внутренний номер дела, напр. инициалы отдела/сотрудника" data-hint-en="Your internal reference number, e.g. department/employee initials" data-hint-de="Ihr internes Aktenzeichen, z.B. Abteilungs-/Mitarbeiterkürzel">Ваш внутренний номер дела, напр. инициалы отдела/сотрудника</span>
+                <input type="text" id="info-unser-zeichen" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-ansprechpartner">Ihr Gesprächspartner <span class="ru" data-en="Your contact">Ваш собеседник</span></label>
+                <span class="hint" data-hint-ru="Имя сотрудника, к которому обращаться по этому вопросу" data-hint-en="Name of the contact person for this matter" data-hint-de="Name des Ansprechpartners für diese Angelegenheit">Имя сотрудника, к которому обращаться по этому вопросу</span>
+                <input type="text" id="info-ansprechpartner" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-abteilung">Abteilung <span class="ru" data-en="Department">Отдел</span></label>
+                <span class="hint" data-hint-ru="Название отдела контактного лица" data-hint-en="Department of the contact person" data-hint-de="Abteilung des Ansprechpartners">Название отдела контактного лица</span>
+                <input type="text" id="info-abteilung" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-durchwahl">Telefon / Durchwahl <span class="ru" data-en="Phone / Direct">Телефон / Прямой номер</span></label>
+                <span class="hint" data-hint-ru="Прямой телефон контактного лица" data-hint-en="Direct phone number of the contact person" data-hint-de="Durchwahl des Ansprechpartners">Прямой телефон контактного лица</span>
+                <input type="text" id="info-durchwahl" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-telefax">Telefax <span class="ru" data-en="Fax">Факс</span></label>
+                <span class="hint" data-hint-ru="Номер факса (если есть)" data-hint-en="Fax number (if applicable)" data-hint-de="Faxnummer (falls vorhanden)">Номер факса (если есть)</span>
+                <input type="text" id="info-telefax" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-bg-nummer">BG-Nummer <span class="ru" data-en="BG number">Номер BG</span></label>
+                <span class="hint" data-hint-ru="Номер Berufsgenossenschaft (если требуется)" data-hint-en="Berufsgenossenschaft number (if required)" data-hint-de="BG-Nummer (falls erforderlich)">Номер Berufsgenossenschaft (если требуется)</span>
+                <input type="text" id="info-bg-nummer" placeholder="">
+            </div>
+        </section>
+
+        <!-- Brief-Inhalt -->
+        <section class="form-section">
+            <h2 class="section-title">Briefinhalt <span class="ru" data-en="Letter content">Содержание письма</span></h2>
+            <span class="hint" data-hint-ru="Основной текст вашего письма" data-hint-en="Main text of your letter" data-hint-de="Haupttext Ihres Briefes">Основной текст вашего письма</span>
+
+            <div class="form-group">
+                <label for="letter-template-select">Briefvorlage <span class="ru" data-en="Letter template">Шаблон письма</span></label>
+                <span class="hint" data-hint-ru="Выберите тип письма — поля заполнятся автоматически. Можно редактировать" data-hint-en="Choose letter type — fields will be filled automatically. You can edit them" data-hint-de="Wählen Sie den Brieftyp — Felder werden automatisch ausgefüllt. Sie können sie bearbeiten">Выберите тип письма — поля заполнятся автоматически. Можно редактировать</span>
+                <select id="letter-template-select">
+                    <option value="">— Vorlage wählen / Выбрать шаблон —</option>
+                    <option value="kuendigung">Kündigung (Расторжение договора)</option>
+                    <option value="mahnung">Mahnung (Напоминание об оплате)</option>
+                    <option value="widerspruch">Widerspruch (Возражение)</option>
+                    <option value="bewerbung">Bewerbung (Заявление о приёме на работу)</option>
+                    <option value="reklamation">Reklamation (Рекламация)</option>
+                    <option value="widerruf">Widerruf (Отзыв договора)</option>
+                    <option value="mietminderung">Mietminderung (Снижение аренды)</option>
+                    <option value="abmahnung">Abmahnung (Предупреждение)</option>
+                    <option value="dsgvo">DSGVO-Auskunft (Запрос GDPR)</option>
+                    <option value="vollmacht">Vollmacht (Доверенность)</option>
+                    <option value="schadensersatz">Schadensersatz (Возмещение ущерба)</option>
+                    <option value="ratenzahlung">Ratenzahlung (Рассрочка)</option>
+                    <option value="mietkaution">Kaution zurück (Возврат залога)</option>
+                </select>
+            </div>
+
+            <!-- Template-specific extra fields (dynamic) -->
+            <div id="tpl-fields-container"></div>
+
+            <div class="form-group">
+                <label for="letter-subject">Betreff <span class="ru" data-en="Subject">Тема</span></label>
+                <span class="hint" data-hint-ru="Кратко о чём письмо. Выделяется жирным шрифтом" data-hint-en="Brief subject of the letter. Displayed in bold" data-hint-de="Kurze Betreffzeile. Wird fett dargestellt">Кратко о чём письмо. Выделяется жирным шрифтом</span>
+                <input type="text" id="letter-subject" placeholder="Ihr Anliegen vom …">
+            </div>
+            <div class="form-group">
+                <label for="letter-salutation">Anrede im Brief <span class="ru" data-en="Salutation">Приветствие в письме</span></label>
+                <span class="hint" data-hint-ru="Выберите вариант или введите свой текст" data-hint-en="Choose an option or enter your own text" data-hint-de="Wählen Sie eine Option oder geben Sie eigenen Text ein">Выберите вариант или введите свой текст</span>
+                <select id="letter-salutation-select">
+                    <option value="">— Выбрать шаблон / Vorlage wählen —</option>
+                    <option value="Sehr geehrte Damen und Herren,">Sehr geehrte Damen und Herren, (Уважаемые дамы и господа)</option>
+                    <option value="Sehr geehrte Frau ">Sehr geehrte Frau ... (Уважаемая госпожа...)</option>
+                    <option value="Sehr geehrter Herr ">Sehr geehrter Herr ... (Уважаемый господин...)</option>
+                    <option value="Liebe Frau ">Liebe Frau ... (Дорогая госпожа...)</option>
+                    <option value="Lieber Herr ">Lieber Herr ... (Дорогой господин...)</option>
+                    <option value="Guten Tag,">Guten Tag, (Добрый день)</option>
+                </select>
+                <input type="text" id="letter-salutation" placeholder="Sehr geehrte Frau Dr. Musterfrau,">
+            </div>
+            <div class="form-group">
+                <label for="letter-body">Brieftext <span class="ru" data-en="Letter text">Текст письма</span></label>
+                <div class="richtext-toolbar" id="richtext-toolbar">
+                    <button type="button" class="rt-btn" data-fmt="bold" title="Bold / Жирный"><b>B</b></button>
+                    <button type="button" class="rt-btn" data-fmt="italic" title="Italic / Курсив"><i>I</i></button>
+                    <button type="button" class="rt-btn" data-fmt="underline" title="Underline / Подчёркнутый"><u>U</u></button>
+                    <span class="rt-sep"></span>
+                    <button type="button" class="rt-btn" data-fmt="ul" title="List / Список">• List</button>
+                </div>
+                <textarea id="letter-body" rows="10" placeholder="hiermit bestätigen wir Ihnen …"></textarea>
+                <div id="char-counter" class="char-counter"></div>
+                <div id="tpl-body-actions" class="tpl-body-actions" style="display:none">
+                    <button type="button" id="btn-save-tpl" class="action-btn btn-secondary btn-sm" data-i18n="btn_save_tpl">💾 Vorlage speichern</button>
+                    <button type="button" id="btn-reset-tpl" class="action-btn btn-secondary btn-sm" data-i18n="btn_reset_tpl">↺ Standardtext</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="letter-closing">Grußformel <span class="ru" data-en="Closing formula">Формула прощания</span></label>
+                <span class="hint" data-hint-ru="Выберите вариант или введите свой текст" data-hint-en="Choose an option or enter your own text" data-hint-de="Wählen Sie eine Option oder geben Sie eigenen Text ein">Выберите вариант или введите свой текст</span>
+                <select id="letter-closing-select">
+                    <option value="">— Выбрать шаблон / Vorlage wählen —</option>
+                    <option value="Mit freundlichen Grüßen">Mit freundlichen Grüßen (С уважением)</option>
+                    <option value="Mit freundlichem Gruß">Mit freundlichem Gruß (С уважением)</option>
+                    <option value="Freundliche Grüße">Freundliche Grüße (Дружеский привет)</option>
+                    <option value="Beste Grüße">Beste Grüße (Наилучшие пожелания)</option>
+                    <option value="Viele Grüße">Viele Grüße (Много приветов)</option>
+                    <option value="Herzliche Grüße">Herzliche Grüße (Сердечный привет)</option>
+                    <option value="Mit besten Grüßen">Mit besten Grüßen (С наилучшими)</option>
+                    <option value="Hochachtungsvoll">Hochachtungsvoll (С глубоким уважением)</option>
+                </select>
+                <input type="text" id="letter-closing" placeholder="Mit freundlichen Grüßen">
+            </div>
+            <div class="form-group">
+                <label for="letter-company">Firmenname unter Grußformel <span class="ru" data-en="Company name below closing">Название фирмы под прощанием</span></label>
+                <span class="hint" data-hint-ru="Название фирмы, ставится между прощанием и подписью (необяз.)" data-hint-en="Company name, placed between closing and signature (optional)" data-hint-de="Firmenname zwischen Grußformel und Unterschrift (optional)">Название фирмы, ставится между прощанием и подписью (необяз.)</span>
+                <input type="text" id="letter-company" placeholder="Max Mustermann GmbH">
+            </div>
+            <div class="form-group">
+                <label for="letter-zusatz">Zusatz (i.A. / i.V. / ppa.) <span class="ru" data-en="Authority">Полномочие</span></label>
+                <span class="hint" data-hint-ru="i.A. = im Auftrag (по поручению), i.V. = in Vertretung (по доверенности)" data-hint-en="i.A. = im Auftrag (on behalf), i.V. = in Vertretung (by proxy)" data-hint-de="i.A. = im Auftrag, i.V. = in Vertretung, ppa. = per Prokura">i.A. = im Auftrag (по поручению), i.V. = in Vertretung (по доверенности)</span>
+                <input type="text" id="letter-zusatz" placeholder="i.A.">
+            </div>
+            <div class="form-group">
+                <label for="letter-signature">Unterschrift (Name) <span class="ru" data-en="Signature (Name)">Подпись (Имя)</span></label>
+                <input type="text" id="letter-signature" placeholder="Max Mustermann">
+            </div>
+            <div class="form-group sig-editor-controls" id="sig-editor-controls" style="display:none">
+                <label class="toggle-row">
+                    <input type="checkbox" id="show-signature" checked>
+                    <span class="toggle-label">Unterschrift-Bild anzeigen <span class="ru" data-en="Show signature image">Показать подпись</span></span>
+                </label>
+                <div class="sig-size-row" id="sig-size-row">
+                    <label for="sig-size" class="sig-size-label">Größe <span class="ru" data-en="Size">Размер</span></label>
+                    <input type="range" id="sig-size" min="30" max="200" value="100" class="sig-size-slider">
+                    <span id="sig-size-val" class="sig-size-val">100%</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="letter-enclosures">Anlagen <span class="ru" data-en="Enclosures">Приложения</span></label>
+                <span class="hint" data-hint-ru="Прилагаемые документы, каждый с новой строки" data-hint-en="Enclosed documents, one per line" data-hint-de="Beigefügte Dokumente, je eins pro Zeile">Прилагаемые документы, каждый с новой строки</span>
+                <textarea id="letter-enclosures" rows="3" placeholder="Anlage 1&#10;Anlage 2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="letter-cc">Kopie an (CC) <span class="ru" data-en="Copy to (CC)">Копия (СС)</span></label>
+                <span class="hint" data-hint-ru="Кому отправить копию письма (необязательно)" data-hint-en="Who to send a copy to (optional)" data-hint-de="An wen eine Kopie gesendet wird (optional)">Кому отправить копию письма (необязательно)</span>
+                <input type="text" id="letter-cc" placeholder="z.B. Herrn Dr. Schmidt, Rechtsanwalt Müller">
+            </div>
+        </section>
+
+        <!-- Fußzeile -->
+        <section class="form-section">
+            <h2 class="section-title">Fußzeile <span class="ru" data-en="Footer">Нижний колонтитул</span></h2>
+            <span class="hint" data-hint-ru="4 столбца внизу страницы: реквизиты фирмы, банк, руководство и т.д." data-hint-en="4 columns at the bottom: company details, bank info, management, etc." data-hint-de="4 Spalten am Seitenende: Firmendaten, Bankverbindung, Geschäftsführung usw.">4 столбца внизу страницы: реквизиты фирмы, банк, руководство и т.д.</span>
+            <div class="form-group">
+                <label for="footer-col1">Spalte 1 <span class="ru" data-en="Column 1">Столбец 1</span></label>
+                <textarea id="footer-col1" rows="3" placeholder="Max Mustermann GmbH&#10;Musterstraße 1&#10;12345 Musterstadt"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="footer-col2">Spalte 2 <span class="ru" data-en="Column 2">Столбец 2</span></label>
+                <textarea id="footer-col2" rows="3" placeholder="Telefon: +49 123 456789&#10;E-Mail: info@mustermann.de&#10;Web: www.mustermann.de"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="footer-col3">Spalte 3 <span class="ru" data-en="Column 3">Столбец 3</span></label>
+                <textarea id="footer-col3" rows="3" placeholder="Sparkasse Musterstadt&#10;IBAN: DE12 3456 7890&#10;BIC: ABCDEFGH"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="footer-col4">Spalte 4 <span class="ru" data-en="Column 4">Столбец 4</span></label>
+                <textarea id="footer-col4" rows="3" placeholder="Geschäftsführer: M. Mustermann&#10;HRB 12345&#10;USt-IdNr.: DE123456789"></textarea>
+            </div>
+        </section>
+
+    </aside>
+
+    <!-- RIGHT: A4 Preview -->
+    <div class="preview-panel">
+        <div class="preview-scroll">
+            <div class="ruler-container">
+                <!-- Horizontal ruler (top) -->
+                <div class="ruler ruler-h" id="ruler-h"></div>
+                <!-- Vertical ruler (left) -->
+                <div class="ruler ruler-v" id="ruler-v"></div>
+                <!-- Corner square -->
+                <div class="ruler-corner"></div>
+
+            <div id="a4-page" class="a4-page form-b">
+
+                <hr class="mark fold-mark-1">
+                <hr class="mark fold-mark-2">
+                <hr class="mark punch-mark">
+
+                <!-- Letterhead area (top, for logo etc.) -->
+                <div class="letterhead" id="preview-letterhead">
+                    <img id="p-letterhead-logo" class="letterhead-logo" style="display:none" alt="">
+                    <span class="letterhead-name" id="p-letterhead-name"></span>
+                </div>
+
+                <!-- Return address line (Rücksendeangabe) -->
+                <div class="return-address" id="p-return-address"></div>
+
+                <!-- Endorsement zone (Zusatz- und Vermerkzone) -->
+                <div class="endorsement-zone" id="p-endorsement"></div>
+
+                <!-- Recipient address -->
+                <div class="recipient-address" id="p-recipient"></div>
+
+                <!-- Information block (right side) -->
+                <div class="info-block" id="p-info-block"></div>
+
+                <!-- Subject -->
+                <div class="letter-subject" id="p-subject"></div>
+
+                <!-- Letter body (salutation + text + closing) -->
+                <div class="letter-body" id="p-body"></div>
+
+                <!-- Draggable signature overlay -->
+                <div id="sig-overlay" class="sig-overlay" style="display:none">
+                    <img id="sig-overlay-img" alt="" draggable="false">
+                </div>
+
+                <!-- Footer -->
+                <div class="letter-footer" id="p-footer"></div>
+            </div>
+            </div> <!-- /ruler-container -->
+        </div>
+
+        <!-- Zoom Controls -->
+        <div class="zoom-bar" id="zoom-bar">
+            <button class="zoom-btn" id="zoom-out" data-i18n-title="title_zoom_out" title="Verkleinern">−</button>
+            <span class="zoom-level" id="zoom-level">100%</span>
+            <button class="zoom-btn" id="zoom-in" data-i18n-title="title_zoom_in" title="Vergrößern">+</button>
+            <div class="zoom-sep"></div>
+            <button class="zoom-btn" id="zoom-fit" data-i18n-title="title_zoom_fit" title="Ganze Seite">⤢</button>
+        </div>
+
+        <!-- DIN 5008 info tooltip -->
+        <div class="din-info">
+            <div class="din-info-toggle" id="din-info-toggle" data-i18n="din_toggle">ℹ DIN 5008 Maße</div>
+            <div class="din-info-panel" id="din-info-panel">
+                <h3>DIN 5008 — Maße</h3>
+                <table>
+                    <tr><td>Blattgröße</td><td>210 × 297 mm</td></tr>
+                    <tr><td>Linker Rand</td><td>25 mm</td></tr>
+                    <tr><td>Rechter Rand</td><td>≥ 20 mm</td></tr>
+                    <tr class="form-a-info"><td>Anschriftfeld (A)</td><td>20 mm links, 27 mm oben</td></tr>
+                    <tr class="form-b-info"><td>Anschriftfeld (B)</td><td>20 mm links, 45 mm oben</td></tr>
+                    <tr class="form-c4-info"><td>Anschriftfeld (C4)</td><td>20 mm links, 45 mm oben</td></tr>
+                    <tr><td>Anschriftfeld Größe</td><td>85 × 45 mm</td></tr>
+                    <tr><td>Informationsblock</td><td>ab 125 mm links</td></tr>
+                    <tr class="form-a-info"><td>Falzmarke 1 (A)</td><td>87 mm</td></tr>
+                    <tr class="form-a-info"><td>Falzmarke 2 (A)</td><td>192 mm</td></tr>
+                    <tr class="form-b-info"><td>Falzmarke 1 (B)</td><td>105 mm</td></tr>
+                    <tr class="form-b-info"><td>Falzmarke 2 (B)</td><td>210 mm</td></tr>
+                    <tr class="form-c4-info"><td>Falzmarken (C4)</td><td>Keine — A4 wird nicht gefaltet</td></tr>
+                    <tr><td>Lochmarke</td><td>148,5 mm</td></tr>
+                    <tr class="form-c4-info"><td>Umschlag C4</td><td>229 × 324 mm — A4 ungefaltet</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- Modal: Contacts -->
+<div class="modal-overlay" id="modal-contacts" hidden>
+    <div class="modal modal-wide">
+        <div class="modal-header">
+            <h2>📋 Kontakte <span class="ru" data-en="Contacts">Контакты</span></h2>
+            <button class="modal-close" data-close="modal-contacts">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="contacts-search">
+                <input type="text" id="contacts-search-input" data-i18n-placeholder="search_placeholder" placeholder="Suchen…">
+            </div>
+            <div id="contacts-list" class="contacts-list">
+                <p class="letters-empty">Keine Kontakte <span class="ru" data-en="No contacts">Нет контактов</span></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="action-btn btn-secondary" data-close="modal-contacts">Schließen <span class="ru" data-en="Close">Закрыть</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Save Letter -->
+<div class="modal-overlay" id="modal-save" hidden>
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Brief speichern <span class="ru" data-en="Save letter">Сохранить письмо</span></h2>
+            <button class="modal-close" data-close="modal-save">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="save-name">Name des Briefes <span class="ru" data-en="Letter name">Название письма</span></label>
+                <input type="text" id="save-name" placeholder="z.B. Kündigung Vertrag, Mahnung Rechnung...">
+            </div>
+            <div class="form-group">
+                <label for="save-category">Kategorie <span class="ru" data-en="Category">Категория</span></label>
+                <select id="save-category">
+                    <option value="free">Freier Brief / Свободный формат</option>
+                    <option value="kuendigung">Kündigung / Расторжение</option>
+                    <option value="mahnung">Mahnung / Напоминание</option>
+                    <option value="widerspruch">Widerspruch / Возражение</option>
+                    <option value="bewerbung">Bewerbung / Заявление</option>
+                    <option value="reklamation">Reklamation / Рекламация</option>
+                    <option value="widerruf">Widerruf / Отзыв договора</option>
+                    <option value="mietminderung">Mietminderung / Снижение аренды</option>
+                    <option value="abmahnung">Abmahnung / Предупреждение</option>
+                    <option value="dsgvo">DSGVO-Auskunft / Запрос GDPR</option>
+                    <option value="vollmacht">Vollmacht / Доверенность</option>
+                    <option value="schadensersatz">Schadensersatz / Возмещение</option>
+                    <option value="ratenzahlung">Ratenzahlung / Рассрочка</option>
+                    <option value="mietkaution">Kaution zurück / Возврат залога</option>
+                </select>
+            </div>
+            <label class="toggle-row save-pdf-toggle">
+                <input type="checkbox" id="save-also-pdf">
+                <span class="toggle-label">Auch als PDF speichern <span class="ru" data-en="Also save as PDF">Также сохранить как PDF</span></span>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button class="action-btn btn-secondary" data-close="modal-save">Abbrechen <span class="ru" data-en="Cancel">Отмена</span></button>
+            <button class="action-btn btn-primary" id="btn-save-confirm">Speichern <span class="ru" data-en="Save">Сохранить</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Letters List -->
+<div class="modal-overlay" id="modal-letters" hidden>
+    <div class="modal modal-wide">
+        <div class="modal-header">
+            <h2>📂 Meine Briefe <span class="ru" data-en="My letters">Мои письма</span></h2>
+            <button class="modal-close" data-close="modal-letters">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="letters-list" class="letters-list">
+                <p class="letters-empty">Keine gespeicherten Briefe <span class="ru" data-en="No saved letters">Нет сохранённых писем</span></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="action-btn btn-secondary" data-close="modal-letters">Schließen <span class="ru" data-en="Close">Закрыть</span></button>
+        </div>
+    </div>
+</div>
+
+<script src="license.js"></script>
+<script src="shared.js"></script>
+<script src="templates.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
