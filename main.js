@@ -83,7 +83,13 @@ function createWindow() {
     });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    createWindow();
+    // Show version badge on dock icon (macOS)
+    if (process.platform === 'darwin' && app.dock) {
+        app.dock.setBadge('v' + app.getVersion());
+    }
+});
 
 // ---- IPC Handlers ----
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
