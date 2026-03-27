@@ -1585,6 +1585,18 @@ html.dark .sig-label {
     color: var(--clr-secondary);
 }
 
+.app-version-badge {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--clr-secondary);
+    border: 1px solid var(--clr-border);
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+}
+
 .home-hero .ru {
     font-size: 0.85rem;
     display: block;

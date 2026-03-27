@@ -85,10 +85,66 @@ function createWindow() {
 
 app.whenReady().then(() => {
     createWindow();
-    // Show version badge on dock icon (macOS)
-    if (process.platform === 'darwin' && app.dock) {
-        app.dock.setBadge('v' + app.getVersion());
-    }
+
+    // Draw version pill on dock icon (macOS) — matches "DIN 5008" pill style at bottom
+    mainWindow.webContents.on('did-finish-load', async () => {
+        if (process.platform === 'darwin' && app.dock) {
+            try {
+                const version = app.getVersion();
+                const dataUrl = await mainWindow.webContents.executeJavaScript(`
+                    (function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 1024; canvas.height = 1024;
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+                        return new Promise((resolve) => {
+                            img.onload = () => {
+                                ctx.drawImage(img, 0, 0, 1024, 1024);
+                                const text = 'v${version}';
+                                ctx.font = 'bold 130px -apple-system, "Helvetica Neue", Helvetica, sans-serif';
+                                const tw = ctx.measureText(text).width;
+                                const pw = tw + 80, ph = 170;
+                                const px = (1024 - pw) / 2, py = 15;
+                                ctx.fillStyle = 'rgba(255,255,255,0.92)';
+                                ctx.beginPath();
+                                ctx.roundRect(px, py, pw, ph, ph / 2);
+                                ctx.fill();
+                                ctx.strokeStyle = 'rgba(30,60,120,0.25)';
+                                ctx.lineWidth = 3;
+                                ctx.stroke();
+                                ctx.fillStyle = '#1a2d5a';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText(text, 1024 / 2, py + ph / 2 + 2);
+                                // Bottom pill — "DIN 5008"
+                                const btext = 'DIN 5008';
+                                ctx.font = 'bold 130px -apple-system, "Helvetica Neue", Helvetica, sans-serif';
+                                const btw = ctx.measureText(btext).width;
+                                const bpw = btw + 80, bph = 170;
+                                const bpx = (1024 - bpw) / 2, bpy = 1024 - bph - 15;
+                                ctx.fillStyle = 'rgba(255,255,255,0.92)';
+                                ctx.beginPath();
+                                ctx.roundRect(bpx, bpy, bpw, bph, bph / 2);
+                                ctx.fill();
+                                ctx.strokeStyle = 'rgba(30,60,120,0.25)';
+                                ctx.lineWidth = 3;
+                                ctx.stroke();
+                                ctx.fillStyle = '#1a2d5a';
+                                ctx.fillText(btext, 1024 / 2, bpy + bph / 2 + 2);
+                                resolve(canvas.toDataURL('image/png'));
+                            };
+                            img.onerror = () => resolve(null);
+                            img.src = '../assets/icon.png';
+                        });
+                    })()
+                `);
+                if (dataUrl) {
+                    const { nativeImage } = require('electron');
+                    app.dock.setIcon(nativeImage.createFromDataURL(dataUrl));
+                }
+            } catch {}
+        }
+    });
 });
 
 // ---- IPC Handlers ----
