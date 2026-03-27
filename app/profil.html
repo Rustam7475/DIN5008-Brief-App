@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mein Profil — DIN 5008</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-scroll">
+
+<!-- ================= NAVIGATION ================= -->
+<nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+        <span class="navbar-brand-icon">📄</span>
+        <span class="navbar-brand-text">DIN 5008 Brief-App</span>
+    </a>
+    <div class="navbar-nav">
+        <a href="index.html" class="nav-link">
+            <span class="nav-link-icon">🏠</span>
+            <span data-i18n="nav_start">Start</span>
+        </a>
+        <a href="letters.html" class="nav-link">
+            <span class="nav-link-icon">📂</span>
+            <span data-i18n="nav_letters">Meine Briefe</span>
+        </a>
+        <a href="profil.html" class="nav-link active">
+            <span class="nav-link-icon">👤</span>
+            <span data-i18n="nav_profile">Profil</span>
+        </a>
+    </div>
+    <div class="navbar-actions">
+        <button class="btn-icon btn-hint-lang" title="Подсказки: Русский → English">🇷🇺</button>
+        <button id="btn-theme" class="btn-icon" title="Thema wechseln / Сменить тему">🌙</button>
+    </div>
+</nav>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="profile-container page-enter">
+
+    <h1 data-i18n="profile_title">👤 Absender-Profil</h1>
+    <p class="profile-desc" data-i18n="profile_desc">
+        Ihre Absenderdaten werden automatisch in neue Briefe eingefügt.
+    </p>
+
+    <!-- License Status -->
+    <div class="license-section" id="license-section">
+        <h2 data-i18n="license_status">Lizenzstatus</h2>
+        <div id="license-status-display">
+            <span class="license-status-badge free" id="license-badge" data-i18n="license_free">Kostenlose Version</span>
+        </div>
+        <div class="license-key-display" id="license-key-display" style="display:none"></div>
+        <div id="license-activate-section" style="margin-top: 12px;">
+            <label for="license-key-input" data-i18n="license_key_label">Lizenzschlüssel:</label>
+            <div class="premium-key-row" style="margin-top: 6px;">
+                <input type="text" id="license-key-input" placeholder="Lizenzschlüssel eingeben" maxlength="40" spellcheck="false" autocomplete="off">
+                <button class="action-btn btn-primary btn-sm" id="btn-activate-license" data-i18n="license_activate">Aktivieren</button>
+            </div>
+            <div id="license-activate-error" class="premium-key-error"></div>
+            <a href="#" class="action-btn btn-accent" id="btn-buy-pro" style="display:inline-block;margin-top:10px;text-decoration:none;text-align:center;padding:10px 20px;border-radius:8px;" target="_blank" rel="noopener" data-i18n="license_buy">🛒 PRO kaufen — 14,99 €</a>
+        </div>
+        <div id="license-pro-section" style="display:none;margin-top:12px;">
+            <button class="action-btn btn-secondary btn-sm" id="btn-deactivate-license" data-i18n="license_deactivate">Deaktivieren</button>
+        </div>
+    </div>
+
+    <!-- Profile Selector -->
+    <div class="profile-section profile-selector-section">
+        <h2 data-i18n="profile_select">Profil wählen</h2>
+        <div class="profile-selector-row">
+            <select id="profile-select" class="profile-select"></select>
+            <button id="btn-new-profile" class="action-btn btn-primary btn-sm" data-i18n="btn_new_profile">＋ Neues Profil</button>
+        </div>
+        <div id="new-profile-row" class="profile-new-row" style="display:none">
+            <input type="text" id="new-profile-name" class="profile-name-input" placeholder="Profil 2">
+            <button id="btn-create-profile" class="action-btn btn-primary btn-sm">✓</button>
+            <button id="btn-cancel-new" class="action-btn btn-secondary btn-sm">✕</button>
+        </div>
+        <div id="rename-profile-row" class="profile-new-row" style="display:none">
+            <input type="text" id="rename-profile-name" class="profile-name-input" placeholder="Neuer Name">
+            <button id="btn-confirm-rename" class="action-btn btn-primary btn-sm">✓</button>
+            <button id="btn-cancel-rename" class="action-btn btn-secondary btn-sm">✕</button>
+        </div>
+        <div class="profile-selector-actions">
+            <button id="btn-rename-profile" class="action-btn btn-secondary btn-sm">✏️ <span data-i18n="profile_rename_prompt">Profil umbenennen</span></button>
+            <button id="btn-delete-profile" class="action-btn btn-secondary btn-sm btn-danger-text" data-i18n="btn_delete_profile">🗑 Profil löschen</button>
+        </div>
+    </div>
+
+    <!-- Personal / Company Data -->
+    <div class="profile-section">
+        <h2 data-i18n="personal_data">Persönliche Daten</h2>
+
+        <div class="form-group">
+            <label for="p-name">Name / Firma <span class="ru" data-en="Name / Company">Имя / Фирма</span></label>
+            <input type="text" id="p-name" placeholder="Max Mustermann GmbH">
+        </div>
+
+        <div class="form-group">
+            <label for="p-street">Straße, Nr. <span class="ru" data-en="Street, No.">Улица, №</span></label>
+            <input type="text" id="p-street" placeholder="Musterstraße 1">
+        </div>
+
+        <div class="profile-row">
+            <div class="form-group small">
+                <label for="p-zip">PLZ <span class="ru" data-en="Zip code">Индекс</span></label>
+                <input type="text" id="p-zip" placeholder="12345">
+            </div>
+            <div class="form-group">
+                <label for="p-city">Ort <span class="ru" data-en="City">Город</span></label>
+                <input type="text" id="p-city" placeholder="Musterstadt">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="p-phone">Telefon <span class="ru" data-en="Phone">Телефон</span></label>
+            <input type="text" id="p-phone" placeholder="+49 123 456789">
+        </div>
+
+        <div class="form-group">
+            <label for="p-email">E-Mail</label>
+            <input type="email" id="p-email" placeholder="info@mustermann.de">
+        </div>
+
+        <div class="form-group">
+            <label for="p-web">Website <span class="ru" data-en="Website">Сайт</span></label>
+            <input type="text" id="p-web" placeholder="www.mustermann.de">
+        </div>
+    </div>
+
+    <!-- Logo Upload -->
+    <div class="profile-section">
+        <h2 data-i18n="logo_title">Firmenlogo <span class="ru" data-en="Company Logo">Логотип компании</span></h2>
+        <span class="hint" data-hint-ru="Логотип отображается в шапке письма (слева вверху)" data-hint-en="Logo displayed in the letter header (top left)" data-hint-de="Logo wird im Briefkopf angezeigt (oben links)">Логотип отображается в шапке письма (слева вверху)</span>
+        <div class="upload-area" id="logo-area">
+            <img id="logo-preview" class="upload-preview" style="display:none" alt="Logo">
+            <div id="logo-placeholder" class="upload-placeholder">📷 <span data-i18n="logo_upload_hint">Klicken oder Datei hierher ziehen</span></div>
+        </div>
+        <input type="file" id="logo-input" accept="image/*" class="sr-only">
+        <div class="upload-actions">
+            <button id="btn-upload-logo" class="action-btn btn-secondary btn-sm">📷 <span data-i18n="btn_upload_logo">Logo hochladen</span></button>
+            <button id="btn-remove-logo" class="action-btn btn-secondary btn-sm btn-danger-text" style="display:none">✕ <span data-i18n="btn_remove">Entfernen</span></button>
+        </div>
+    </div>
+
+    <!-- Signature Upload / Draw -->
+    <div class="profile-section">
+        <h2 data-i18n="sig_title">Unterschrift <span class="ru" data-en="Signature">Подпись</span></h2>
+        <span class="hint" data-hint-ru="Изображение подписи — вставляется перед именем в письме" data-hint-en="Signature image — inserted before the name in the letter" data-hint-de="Unterschriftsbild — wird vor dem Namen im Brief eingefügt">Изображение подписи — вставляется перед именем в письме</span>
+        <div class="upload-area sig-upload-area" id="sig-area">
+            <img id="sig-preview" class="upload-preview" style="display:none" alt="Unterschrift">
+            <div id="sig-canvas-wrap" class="sig-canvas-wrap" style="display:none">
+                <canvas id="sig-canvas" class="sig-canvas"></canvas>
+                <div class="sig-baseline"></div>
+                <div class="sig-label">✕</div>
+            </div>
+            <div id="sig-placeholder" class="upload-placeholder">✍️ <span data-i18n="sig_upload_hint">Zeichnen oder Bild hochladen</span></div>
+        </div>
+        <input type="file" id="sig-input" accept="image/*" class="sr-only">
+        <div class="upload-actions">
+            <button id="btn-draw-sig" class="action-btn btn-secondary btn-sm">✍️ <span data-i18n="btn_draw_sig">Zeichnen</span></button>
+            <button id="btn-upload-sig" class="action-btn btn-secondary btn-sm">📷 <span data-i18n="btn_upload_sig">Bild hochladen</span></button>
+            <label class="sig-color-label" id="sig-color-label" style="display:none">
+                <input type="color" id="sig-color" value="#1a3fc7" class="sig-color-input">
+                <span data-i18n="sig_color">Farbe</span>
+            </label>
+            <button id="btn-clear-sig" class="action-btn btn-secondary btn-sm" style="display:none">↺ <span data-i18n="btn_clear_canvas">Löschen</span></button>
+            <button id="btn-save-sig" class="action-btn btn-primary btn-sm" style="display:none">✓ <span data-i18n="btn_accept_sig">Übernehmen</span></button>
+            <button id="btn-remove-sig" class="action-btn btn-secondary btn-sm btn-danger-text" style="display:none">✕ <span data-i18n="btn_remove">Entfernen</span></button>
+        </div>
+    </div>
+
+    <!-- Footer Columns -->
+    <div class="profile-section">
+        <h2 data-i18n="footer_title">Fußzeile</h2>
+        <span class="hint" data-hint-ru="4 столбца внизу каждого письма: реквизиты, банк, руководство и т.д." data-hint-en="4 columns at the bottom of each letter: details, bank info, management, etc." data-hint-de="4 Spalten am Seitenende jedes Briefes: Firmendaten, Bank, Geschäftsführung usw.">4 столбца внизу каждого письма: реквизиты, банк, руководство и т.д.</span>
+
+        <div class="form-group form-group--spaced">
+            <label for="p-footer1">Spalte 1 <span class="ru" data-en="Column 1">Столбец 1</span></label>
+            <textarea id="p-footer1" rows="3" placeholder="Max Mustermann GmbH&#10;Musterstraße 1&#10;12345 Musterstadt"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="p-footer2">Spalte 2 <span class="ru" data-en="Column 2">Столбец 2</span></label>
+            <textarea id="p-footer2" rows="3" placeholder="Telefon: +49 123 456789&#10;E-Mail: info@mustermann.de"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="p-footer3">Spalte 3 <span class="ru" data-en="Column 3">Столбец 3</span></label>
+            <textarea id="p-footer3" rows="3" placeholder="Sparkasse Musterstadt&#10;IBAN: DE12 3456 7890&#10;BIC: ABCDEFGH"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="p-footer4">Spalte 4 <span class="ru" data-en="Column 4">Столбец 4</span></label>
+            <textarea id="p-footer4" rows="3" placeholder="Geschäftsführer: M. Mustermann&#10;HRB 12345&#10;USt-IdNr.: DE123456789"></textarea>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="profile-actions">
+        <button id="btn-save" class="action-btn btn-primary" data-i18n="btn_save_profile">💾 Profil speichern</button>
+        <button id="btn-clear" class="action-btn btn-secondary" data-i18n="btn_clear_fields">Felder leeren</button>
+    </div>
+
+    <!-- Contacts Export/Import -->
+    <div class="profile-section profile-section--contacts">
+        <h2>📋 Kontakte <span class="ru" data-en="Contacts">Контакты</span></h2>
+        <span class="hint" data-hint-ru="Экспорт и импорт контактов в формате CSV или JSON" data-hint-en="Export and import contacts as CSV or JSON" data-hint-de="Kontakte als CSV oder JSON exportieren/importieren">Экспорт и импорт контактов в формате CSV или JSON</span>
+        <div class="contacts-export-actions">
+            <button id="btn-export-contacts-csv" class="action-btn btn-secondary btn-sm">📄 CSV Export</button>
+            <button id="btn-export-contacts-json" class="action-btn btn-secondary btn-sm">📋 JSON Export</button>
+            <label class="action-btn btn-secondary btn-sm" for="import-contacts-file" style="cursor:pointer">📥 Import (CSV/JSON)</label>
+            <input type="file" id="import-contacts-file" accept=".csv,.json" class="sr-only">
+        </div>
+        <div id="contacts-count" class="hint contacts-count"></div>
+    </div>
+
+</div>
+
+<script src="license.js"></script>
+<script src="shared.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    ThemeManager.init();
+    HintLangManager.init();
+
+    // Field mapping: HTML id → ProfileManager key
+    const MAP = {
+        'p-name':    'name',
+        'p-street':  'street',
+        'p-zip':     'zip',
+        'p-city':    'city',
+        'p-phone':   'phone',
+        'p-email':   'email',
+        'p-web':     'web',
+        'p-footer1': 'footerCol1',
+        'p-footer2': 'footerCol2',
+        'p-footer3': 'footerCol3',
+        'p-footer4': 'footerCol4'
+    };
+
+    const profileSelect = document.getElementById('profile-select');
+    const btnNew = document.getElementById('btn-new-profile');
+    const btnRename = document.getElementById('btn-rename-profile');
+    const btnDelete = document.getElementById('btn-delete-profile');
+
+    // ---- Logo & Signature state ----
+    let currentLogo = null;
+    let currentSignature = null;
+
+    function resizeImage(dataUrl, maxW, maxH) {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (w > maxW || h > maxH) {
+                    const r = Math.min(maxW / w, maxH / h);
+                    w = Math.round(w * r);
+                    h = Math.round(h * r);
+                }
+                const c = document.createElement('canvas');
+                c.width = w; c.height = h;
+                c.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(c.toDataURL('image/png'));
+            };
+            img.src = dataUrl;
+        });
+    }
+
+    function showLogoPreview() {
+        const prev = document.getElementById('logo-preview');
+        const ph = document.getElementById('logo-placeholder');
+        const btnRm = document.getElementById('btn-remove-logo');
+        if (currentLogo) {
+            prev.src = currentLogo; prev.style.display = 'block';
+            ph.style.display = 'none'; btnRm.style.display = '';
+        } else {
+            prev.style.display = 'none'; ph.style.display = '';
+            btnRm.style.display = 'none';
+        }
+    }
+
+    function showSigPreview() {
+        const prev = document.getElementById('sig-preview');
+        const ph = document.getElementById('sig-placeholder');
+        const wrap = document.getElementById('sig-canvas-wrap');
+        const btnRm = document.getElementById('btn-remove-sig');
+        const btnCl = document.getElementById('btn-clear-sig');
+        const btnSv = document.getElementById('btn-save-sig');
+        if (currentSignature) {
+            prev.src = currentSignature; prev.style.display = 'block';
+            ph.style.display = 'none'; wrap.style.display = 'none';
+            btnRm.style.display = ''; btnCl.style.display = 'none'; btnSv.style.display = 'none';
+        } else {
+            prev.style.display = 'none'; ph.style.display = '';
+            wrap.style.display = 'none';
+            btnRm.style.display = 'none'; btnCl.style.display = 'none'; btnSv.style.display = 'none';
+        }
+    }
+
+    // Logo upload
+    const logoInput = document.getElementById('logo-input');
+    document.getElementById('btn-upload-logo').addEventListener('click', () => logoInput.click());
+    document.getElementById('logo-area').addEventListener('click', e => {
+        if (e.target.closest('img')) return;
+        logoInput.click();
+    });
+    logoInput.addEventListener('change', () => {
+        if (logoInput.files[0]) handleFileUpload(logoInput.files[0], 'logo');
+        logoInput.value = '';
+    });
+    document.getElementById('btn-remove-logo').addEventListener('click', () => {
+        currentLogo = null; showLogoPreview();
+    });
+
+    // Logo drag & drop
+    const logoArea = document.getElementById('logo-area');
+    logoArea.addEventListener('dragover', e => { e.preventDefault(); logoArea.classList.add('drag-over'); });
+    logoArea.addEventListener('dragleave', () => logoArea.classList.remove('drag-over'));
+    logoArea.addEventListener('drop', e => {
+        e.preventDefault(); logoArea.classList.remove('drag-over');
+        if (e.dataTransfer.files[0]) handleFileUpload(e.dataTransfer.files[0], 'logo');
+    });
+
+    // Signature upload
+    const sigInput = document.getElementById('sig-input');
+    document.getElementById('btn-upload-sig').addEventListener('click', () => sigInput.click());
+    sigInput.addEventListener('change', () => {
+        if (sigInput.files[0]) handleFileUpload(sigInput.files[0], 'sig');
+        sigInput.value = '';
+    });
+    document.getElementById('btn-remove-sig').addEventListener('click', () => {
+        currentSignature = null; showSigPreview();
+    });
+
+    // Signature drag & drop
+    const sigArea = document.getElementById('sig-area');
+    sigArea.addEventListener('dragover', e => { e.preventDefault(); sigArea.classList.add('drag-over'); });
+    sigArea.addEventListener('dragleave', () => sigArea.classList.remove('drag-over'));
+    sigArea.addEventListener('drop', e => {
+        e.preventDefault(); sigArea.classList.remove('drag-over');
+        if (e.dataTransfer.files[0]) handleFileUpload(e.dataTransfer.files[0], 'sig');
+    });
+
+    async function handleFileUpload(file, type) {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = async () => {
+            if (type === 'logo') {
+                currentLogo = await resizeImage(reader.result, 400, 150);
+                showLogoPreview();
+            } else {
+                currentSignature = await resizeImage(reader.result, 600, 200);
+                showSigPreview();
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ---- Smooth Signature Pad (macOS Notes style) ----
+    const sigCanvas = document.getElementById('sig-canvas');
+    const sigCtx = sigCanvas.getContext('2d');
+    const sigWrap = document.getElementById('sig-canvas-wrap');
+    let sigPoints = [];  // all points for current stroke
+    let sigStrokes = []; // array of finished strokes for undo
+    let isDrawing = false;
+    let sigColor = '#1a3fc7';
+    const MIN_WIDTH = 0.8;
+    const MAX_WIDTH = 3.5;
+    const SMOOTHING = 0.4;
+
+    function initSigCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = sigCanvas.getBoundingClientRect();
+        sigCanvas.width = rect.width * dpr;
+        sigCanvas.height = rect.height * dpr;
+        sigCtx.scale(dpr, dpr);
+        sigCtx.lineCap = 'round';
+        sigCtx.lineJoin = 'round';
+        redrawStrokes();
+    }
+
+    function getCanvasPos(e) {
+        const rect = sigCanvas.getBoundingClientRect();
+        if (e.touches) {
+            return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top, t: Date.now() };
+        }
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top, t: Date.now() };
+    }
+
+    function getLineWidth(p1, p2) {
+        const dx = p2.x - p1.x, dy = p2.y - p1.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const dt = Math.max(p2.t - p1.t, 1);
+        const speed = dist / dt;
+        // Slow → thick, fast → thin
+        const w = MAX_WIDTH - (MAX_WIDTH - MIN_WIDTH) * Math.min(speed / 3, 1);
+        // Smooth transition
+        return p1._w ? p1._w + (w - p1._w) * SMOOTHING : w;
+    }
+
+    function drawStroke(points, color) {
+        if (points.length < 2) return;
+        sigCtx.strokeStyle = color;
+        for (let i = 1; i < points.length; i++) {
+            const p0 = points[i - 1];
+            const p1 = points[i];
+            const w = p1._w || 1.5;
+            sigCtx.lineWidth = w;
+            sigCtx.beginPath();
+            if (i === 1) {
+                sigCtx.moveTo(p0.x, p0.y);
+                sigCtx.lineTo(p1.x, p1.y);
+            } else {
+                // Quadratic bezier through midpoints for smooth curves
+                const mid = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2 };
+                sigCtx.moveTo((points[i - 2].x + p0.x) / 2, (points[i - 2].y + p0.y) / 2);
+                sigCtx.quadraticCurveTo(p0.x, p0.y, mid.x, mid.y);
+            }
+            sigCtx.stroke();
+        }
+    }
+
+    function redrawStrokes() {
+        const dpr = window.devicePixelRatio || 1;
+        sigCtx.clearRect(0, 0, sigCanvas.width / dpr, sigCanvas.height / dpr);
+        sigStrokes.forEach(s => drawStroke(s.points, s.color));
+    }
+
+    function startStroke(e) {
+        isDrawing = true;
+        const p = getCanvasPos(e);
+        p._w = (MIN_WIDTH + MAX_WIDTH) / 2;
+        sigPoints = [p];
+    }
+
+    function moveStroke(e) {
+        if (!isDrawing) return;
+        const p = getCanvasPos(e);
+        const prev = sigPoints[sigPoints.length - 1];
+        p._w = getLineWidth(prev, p);
+        sigPoints.push(p);
+        // Draw incrementally
+        if (sigPoints.length >= 3) {
+            const len = sigPoints.length;
+            const pts = [sigPoints[len - 3], sigPoints[len - 2], sigPoints[len - 1]];
+            sigCtx.strokeStyle = sigColor;
+            sigCtx.lineWidth = pts[2]._w;
+            sigCtx.beginPath();
+            const mid1 = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+            const mid2 = { x: (pts[1].x + pts[2].x) / 2, y: (pts[1].y + pts[2].y) / 2 };
+            sigCtx.moveTo(mid1.x, mid1.y);
+            sigCtx.quadraticCurveTo(pts[1].x, pts[1].y, mid2.x, mid2.y);
+            sigCtx.stroke();
+        } else if (sigPoints.length === 2) {
+            sigCtx.strokeStyle = sigColor;
+            sigCtx.lineWidth = p._w;
+            sigCtx.beginPath();
+            sigCtx.moveTo(sigPoints[0].x, sigPoints[0].y);
+            sigCtx.lineTo(p.x, p.y);
+            sigCtx.stroke();
+        }
+    }
+
+    function endStroke() {
+        if (!isDrawing) return;
+        isDrawing = false;
+        if (sigPoints.length >= 2) {
+            sigStrokes.push({ points: sigPoints.slice(), color: sigColor });
+        } else if (sigPoints.length === 1) {
+            // Dot
+            const p = sigPoints[0];
+            sigCtx.fillStyle = sigColor;
+            sigCtx.beginPath();
+            sigCtx.arc(p.x, p.y, (MIN_WIDTH + MAX_WIDTH) / 4, 0, Math.PI * 2);
+            sigCtx.fill();
+            sigStrokes.push({ points: [p, { ...p, x: p.x + 0.1, _w: 1 }], color: sigColor });
+        }
+        sigPoints = [];
+    }
+
+    sigCanvas.addEventListener('mousedown', e => { e.preventDefault(); startStroke(e); });
+    sigCanvas.addEventListener('mousemove', e => { moveStroke(e); });
+    sigCanvas.addEventListener('mouseup', () => { endStroke(); });
+    sigCanvas.addEventListener('mouseleave', () => { endStroke(); });
+    sigCanvas.addEventListener('touchstart', e => { e.preventDefault(); startStroke(e); });
+    sigCanvas.addEventListener('touchmove', e => { e.preventDefault(); moveStroke(e); });
+    sigCanvas.addEventListener('touchend', () => { endStroke(); });
+
+    const sigColorInput = document.getElementById('sig-color');
+    sigColorInput.addEventListener('input', () => {
+        sigColor = sigColorInput.value;
+    });
+
+    function openSigCanvas() {
+        sigWrap.style.display = '';
+        document.getElementById('sig-placeholder').style.display = 'none';
+        document.getElementById('sig-preview').style.display = 'none';
+        document.getElementById('btn-clear-sig').style.display = '';
+        document.getElementById('btn-save-sig').style.display = '';
+        document.getElementById('sig-color-label').style.display = '';
+        sigStrokes = [];
+        initSigCanvas();
+    }
+
+    document.getElementById('btn-draw-sig').addEventListener('click', openSigCanvas);
+    document.getElementById('btn-clear-sig').addEventListener('click', () => {
+        sigStrokes = [];
+        initSigCanvas();
+    });
+    document.getElementById('btn-save-sig').addEventListener('click', () => {
+        // Export only the content (trim whitespace)
+        const dpr = window.devicePixelRatio || 1;
+        const w = sigCanvas.width, h = sigCanvas.height;
+        const imgData = sigCtx.getImageData(0, 0, w, h).data;
+        let minX = w, minY = h, maxX = 0, maxY = 0;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                if (imgData[(y * w + x) * 4 + 3] > 10) {
+                    if (x < minX) minX = x; if (x > maxX) maxX = x;
+                    if (y < minY) minY = y; if (y > maxY) maxY = y;
+                }
+            }
+        }
+        if (maxX <= minX || maxY <= minY) return; // empty
+        const pad = 8 * dpr;
+        minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+        maxX = Math.min(w - 1, maxX + pad); maxY = Math.min(h - 1, maxY + pad);
+        const cw = maxX - minX + 1, ch = maxY - minY + 1;
+        const trimmed = document.createElement('canvas');
+        trimmed.width = cw; trimmed.height = ch;
+        trimmed.getContext('2d').drawImage(sigCanvas, minX, minY, cw, ch, 0, 0, cw, ch);
+        currentSignature = trimmed.toDataURL('image/png');
+        showSigPreview();
+        document.getElementById('sig-color-label').style.display = 'none';
+    });
+
+    // Handle canvas resize
+    window.addEventListener('resize', () => {
+        if (sigWrap.style.display !== 'none' && sigWrap.style.display !== '') return;
+        // Don't re-init when not visible
+    });
+
+    // Render profile dropdown
+    function renderProfileList() {
+        const all = ProfileManager.getAll();
+        const activeId = ProfileManager.getActiveId();
+        profileSelect.innerHTML = '';
+        if (!all.length) {
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = t('no_profiles');
+            profileSelect.appendChild(opt);
+            btnDelete.disabled = true;
+            btnRename.disabled = true;
+            return;
+        }
+        btnDelete.disabled = false;
+        btnRename.disabled = false;
+        all.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name || 'Profil';
+            if (p.id === activeId) opt.selected = true;
+            profileSelect.appendChild(opt);
+        });
+    }
+
+    // Load profile data into fields
+    function loadProfile(id) {
+        const p = ProfileManager.getById(id);
+        const data = p ? p.data : {};
+        Object.entries(MAP).forEach(([htmlId, key]) => {
+            const el = document.getElementById(htmlId);
+            if (el) el.value = data[key] || '';
+        });
+        currentLogo = data.logo || null;
+        showLogoPreview();
+        currentSignature = data.signature || null;
+        showSigPreview();
+    }
+
+    // Collect field data
+    function collectData() {
+        const data = {};
+        Object.entries(MAP).forEach(([htmlId, key]) => {
+            const el = document.getElementById(htmlId);
+            if (el) data[key] = el.value;
+        });
+        if (currentLogo) data.logo = currentLogo;
+        if (currentSignature) data.signature = currentSignature;
+        return data;
+    }
+
+    // Save current profile
+    const btnSave = document.getElementById('btn-save');
+    async function saveProfile() {
+        // Block save if phone is invalid
+        const phoneInput = document.getElementById('p-phone');
+        if (phoneInput && phoneInput.value.trim()) {
+            const isValid = await validatePhone(phoneInput);
+            if (!isValid) {
+                phoneInput.focus();
+                return;
+            }
+        }
+
+        let id = profileSelect.value;
+        const data = collectData();
+        // Auto-create profile if none exists
+        if (!id) {
+            const name = data.name || 'Profil 1';
+            id = ProfileManager.generateId();
+            ProfileManager.saveProfile(id, name, data);
+            ProfileManager.setActiveId(id);
+            renderProfileList();
+            HintLangManager.apply();
+            showSavedState();
+            return;
+        }
+        const p = ProfileManager.getById(id);
+        ProfileManager.saveProfile(id, p ? p.name : 'Profil', data);
+        ProfileManager.setActiveId(id);
+        showSavedState();
+    }
+
+    function showSavedState() {
+        btnSave.disabled = true;
+        btnSave.textContent = t('btn_saved_profile');
+        btnSave.classList.remove('btn-primary');
+        btnSave.classList.add('btn-saved');
+    }
+
+    function resetSaveButton() {
+        btnSave.disabled = false;
+        btnSave.textContent = t('btn_save_profile');
+        btnSave.classList.remove('btn-saved');
+        btnSave.classList.add('btn-primary');
+    }
+
+    // Create new profile — show inline input
+    const newRow = document.getElementById('new-profile-row');
+    const newNameInput = document.getElementById('new-profile-name');
+    const btnCreate = document.getElementById('btn-create-profile');
+    const btnCancelNew = document.getElementById('btn-cancel-new');
+
+    function showNewProfileInput() {
+        if (!LicenseManager.canCreateProfile()) {
+            LicenseManager.showUpgradeModal('profile');
+            return;
+        }
+        newNameInput.value = 'Profil ' + (ProfileManager.getAll().length + 1);
+        newRow.style.display = 'flex';
+        newNameInput.focus();
+        newNameInput.select();
+    }
+
+    function createProfile() {
+        const name = newNameInput.value.trim();
+        if (!name) { newNameInput.focus(); return; }
+        const id = ProfileManager.generateId();
+        ProfileManager.saveProfile(id, name, { name: name });
+        ProfileManager.setActiveId(id);
+        newRow.style.display = 'none';
+        renderProfileList();
+        // Clear all fields for the new empty profile
+        Object.keys(MAP).forEach(htmlId => {
+            const el = document.getElementById(htmlId);
+            if (el) el.value = '';
+        });
+        // Auto-fill Name / Firma with the profile name
+        document.getElementById('p-name').value = name;
+        currentLogo = null; showLogoPreview();
+        currentSignature = null; showSigPreview();
+        HintLangManager.apply();
+    }
+
+    function cancelNewProfile() {
+        newRow.style.display = 'none';
+    }
+
+    btnCreate.addEventListener('click', createProfile);
+    btnCancelNew.addEventListener('click', cancelNewProfile);
+    newNameInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') createProfile();
+        if (e.key === 'Escape') cancelNewProfile();
+    });
+
+    // Rename profile — inline input
+    const renameRow = document.getElementById('rename-profile-row');
+    const renameInput = document.getElementById('rename-profile-name');
+    const btnConfirmRename = document.getElementById('btn-confirm-rename');
+    const btnCancelRename = document.getElementById('btn-cancel-rename');
+
+    function showRenameInput() {
+        const id = profileSelect.value;
+        if (!id) return;
+        const p = ProfileManager.getById(id);
+        renameInput.value = p ? p.name : '';
+        renameRow.style.display = 'flex';
+        renameInput.focus();
+        renameInput.select();
+    }
+
+    function confirmRename() {
+        const id = profileSelect.value;
+        if (!id) return;
+        const name = renameInput.value.trim();
+        if (!name) { renameInput.focus(); return; }
+        const p = ProfileManager.getById(id);
+        ProfileManager.saveProfile(id, name, p ? p.data : {});
+        renameRow.style.display = 'none';
+        renderProfileList();
+        HintLangManager.apply();
+    }
+
+    function cancelRename() {
+        renameRow.style.display = 'none';
+    }
+
+    btnConfirmRename.addEventListener('click', confirmRename);
+    btnCancelRename.addEventListener('click', cancelRename);
+    renameInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') confirmRename();
+        if (e.key === 'Escape') cancelRename();
+    });
+
+    // Delete profile
+    function deleteProfile() {
+        const id = profileSelect.value;
+        if (!id) return;
+        const p = ProfileManager.getById(id);
+        if (!confirm(t('profile_delete_confirm', { name: p ? p.name : '' }))) return;
+        ProfileManager.deleteProfile(id);
+        renderProfileList();
+        const newActive = ProfileManager.getActiveId();
+        if (newActive) loadProfile(newActive);
+        else clearFields(true);
+        HintLangManager.apply();
+    }
+
+    // Clear all fields
+    function clearFields(silent) {
+        if (!silent && !confirm(t('clear_fields'))) return;
+        Object.keys(MAP).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        currentLogo = null; showLogoPreview();
+        currentSignature = null; showSigPreview();
+    }
+
+    // Switch profile
+    let _suppressInputReset = false;
+    profileSelect.addEventListener('change', () => {
+        const id = profileSelect.value;
+        ProfileManager.setActiveId(id);
+        _suppressInputReset = true;
+        loadProfile(id);
+        _suppressInputReset = false;
+        showSavedState();
+    });
+
+    // Re-enable save button when any field changes
+    Object.keys(MAP).forEach(htmlId => {
+        const el = document.getElementById(htmlId);
+        if (el) el.addEventListener('input', () => {
+            if (!_suppressInputReset) resetSaveButton();
+        });
+    });
+
+    btnNew.addEventListener('click', showNewProfileInput);
+    btnRename.addEventListener('click', showRenameInput);
+    btnDelete.addEventListener('click', deleteProfile);
+    document.getElementById('btn-save').addEventListener('click', saveProfile);
+    document.getElementById('btn-clear').addEventListener('click', () => clearFields(false));
+
+    // Init: if no profiles, create default one
+    if (!ProfileManager.getAll().length) {
+        // Check if there's legacy data to migrate
+        const legacy = ProfileManager.get();
+        if (Object.keys(legacy).length) {
+            ProfileManager.saveProfile('default', legacy.name || 'Profil 1', legacy);
+            ProfileManager.setActiveId('default');
+        }
+    }
+
+    renderProfileList();
+    const activeId = ProfileManager.getActiveId();
+    if (activeId) loadProfile(activeId);
+
+    // Phone validation
+    initPhoneValidation('#p-phone');
+
+    // ---- Contacts Export/Import ----
+    function updateContactsCount() {
+        const el = document.getElementById('contacts-count');
+        if (!el) return;
+        const count = ContactsManager.getAll().length;
+        const lang = HintLangManager.get();
+        if (lang === 'ru') el.textContent = 'Контактов: ' + count;
+        else if (lang === 'en') el.textContent = 'Contacts: ' + count;
+        else el.textContent = 'Kontakte: ' + count;
+    }
+    updateContactsCount();
+
+    // CSV Export
+    document.getElementById('btn-export-contacts-csv').addEventListener('click', () => {
+        const contacts = ContactsManager.getAll();
+        if (!contacts.length) { alert(t('no_contacts_export')); return; }
+        const headers = ['firma', 'anrede', 'name', 'strasse', 'plz', 'ort', 'zusatz'];
+        const csvRows = [headers.join(';')];
+        contacts.forEach(c => {
+            csvRows.push(headers.map(h => '"' + (c[h] || '').replace(/"/g, '""') + '"').join(';'));
+        });
+        const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'DIN5008_Kontakte.csv'; a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // JSON Export
+    document.getElementById('btn-export-contacts-json').addEventListener('click', () => {
+        const contacts = ContactsManager.getAll();
+        if (!contacts.length) { alert(t('no_contacts_export')); return; }
+        const blob = new Blob([JSON.stringify(contacts, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'DIN5008_Kontakte.json'; a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // Import (CSV or JSON)
+    document.getElementById('import-contacts-file').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!LicenseManager.canImportExport()) {
+            LicenseManager.showUpgradeModal('import');
+            e.target.value = '';
+            return;
+        }
+        const text = await file.text();
+        let imported = 0;
+
+        if (file.name.endsWith('.json')) {
+            try {
+                const arr = JSON.parse(text);
+                if (!Array.isArray(arr)) throw new Error('Not an array');
+                arr.forEach(c => {
+                    if (c.name || c.firma) {
+                        delete c.id; delete c.createdAt;
+                        ContactsManager.save(c);
+                        imported++;
+                    }
+                });
+            } catch (err) {
+                alert(t('import_error') + err.message);
+                return;
+            }
+        } else {
+            // CSV parse
+            const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(l => l.trim());
+            if (lines.length < 2) { alert(t('import_error') + 'Empty CSV'); return; }
+            const headers = lines[0].split(';').map(h => h.replace(/"/g, '').trim());
+            for (let i = 1; i < lines.length; i++) {
+                const vals = lines[i].split(';').map(v => v.trim());
+                const c = {};
+                headers.forEach((h, idx) => {
+                    c[h] = (vals[idx] || '').replace(/^"|"$/g, '').replace(/""/g, '"').trim();
+                });
+                if (c.name || c.firma) {
+                    ContactsManager.save(c);
+                    imported++;
+                }
+            }
+        }
+
+        alert(t('contacts_imported', { count: imported }));
+        updateContactsCount();
+        e.target.value = '';
+    });
+
+    // ---- License Section ----
+    function updateLicenseUI() {
+        const badge = document.getElementById('license-badge');
+        const keyDisplay = document.getElementById('license-key-display');
+        const activateSection = document.getElementById('license-activate-section');
+        const proSection = document.getElementById('license-pro-section');
+        const buyBtn = document.getElementById('btn-buy-pro');
+
+        if (LicenseManager.isPro()) {
+            badge.textContent = t('license_pro');
+            badge.className = 'license-status-badge pro';
+            keyDisplay.textContent = LicenseManager.getKey();
+            keyDisplay.style.display = '';
+            activateSection.style.display = 'none';
+            proSection.style.display = '';
+        } else {
+            badge.textContent = t('license_free');
+            badge.className = 'license-status-badge free';
+            keyDisplay.style.display = 'none';
+            activateSection.style.display = '';
+            proSection.style.display = 'none';
+            buyBtn.href = LicenseManager.GUMROAD_URL;
+        }
+    }
+
+    document.getElementById('btn-activate-license').addEventListener('click', async () => {
+        const input = document.getElementById('license-key-input');
+        const error = document.getElementById('license-activate-error');
+        const btn = document.getElementById('btn-activate-license');
+        const key = input.value.trim();
+        if (!key) return;
+
+        btn.disabled = true;
+        error.textContent = t('license_checking') || 'Wird geprüft…';
+        error.className = 'premium-key-info';
+
+        const result = await LicenseManager.activateOnline(key);
+        btn.disabled = false;
+
+        if (result.success) {
+            error.textContent = t('license_activated');
+            error.className = 'premium-key-success';
+            updateLicenseUI();
+        } else if (result.error === 'network') {
+            error.textContent = t('license_network_error') || 'Keine Internetverbindung.';
+            error.className = 'premium-key-error';
+        } else {
+            error.textContent = t('license_invalid');
+            error.className = 'premium-key-error';
+            input.classList.add('field-error');
+        }
+    });
+
+    document.getElementById('license-key-input').addEventListener('input', function() {
+        this.classList.remove('field-error');
+        document.getElementById('license-activate-error').textContent = '';
+    });
+
+    document.getElementById('btn-deactivate-license').addEventListener('click', () => {
+        LicenseManager.deactivate();
+        updateLicenseUI();
+    });
+
+    updateLicenseUI();
+
+})();
+</script>
+
+</body>
+</html>
