@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Briefe — DIN 5008</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-scroll">
+
+<!-- ================= NAVIGATION ================= -->
+<nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+        <span class="navbar-brand-icon">📄</span>
+        <span class="navbar-brand-text">DIN 5008 Brief-App</span>
+    </a>
+    <div class="navbar-nav">
+        <a href="index.html" class="nav-link">
+            <span class="nav-link-icon">🏠</span>
+            <span data-i18n="nav_start">Start</span>
+        </a>
+        <a href="letters.html" class="nav-link active">
+            <span class="nav-link-icon">📂</span>
+            <span data-i18n="nav_letters">Meine Briefe</span>
+        </a>
+        <a href="profil.html" class="nav-link">
+            <span class="nav-link-icon">👤</span>
+            <span data-i18n="nav_profile">Profil</span>
+        </a>
+    </div>
+    <div class="navbar-actions">
+        <button class="btn-icon btn-hint-lang" title="Подсказки: Русский → English">🇷🇺</button>
+        <button id="btn-theme" class="btn-icon" title="Thema wechseln / Сменить тему">🌙</button>
+    </div>
+</nav>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="letters-container page-enter">
+
+    <div class="letters-toolbar">
+        <h1 data-i18n="my_letters_title">📂 Meine Briefe</h1>
+        <div class="letters-toolbar-actions">
+            <button class="action-btn btn-secondary" id="btn-export" data-i18n="btn_export">💾 Backup exportieren</button>
+            <label class="action-btn btn-secondary" for="import-file" style="cursor:pointer" data-i18n="btn_import">📥 Backup importieren</label>
+            <input type="file" id="import-file" accept=".json" class="sr-only">
+        </div>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="letters-filters">
+        <input type="text" id="letters-search" class="letters-search-input" placeholder="Suchen…" data-i18n-placeholder="search_placeholder">
+        <div class="letters-filter-pills" id="filter-status">
+            <button class="filter-pill active" data-status="all" data-i18n="status_all">Alle</button>
+            <button class="filter-pill" data-status="draft" data-i18n="status_draft">✏ Entwurf</button>
+            <button class="filter-pill" data-status="sent" data-i18n="status_sent">✓ Gesendet</button>
+            <button class="filter-pill" data-status="archived" data-i18n="status_archived">📦 Archiviert</button>
+        </div>
+    </div>
+
+    <div id="letters-content"></div>
+
+</div>
+
+<script src="license.js"></script>
+<script src="shared.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    ThemeManager.init();
+    HintLangManager.init();
+
+    let activeStatus = 'all';
+    let searchQuery = '';
+
+    function render() {
+        const container = document.getElementById('letters-content');
+        let all = LettersManager.getAll();
+
+        // Filter by search query
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            all = all.filter(l =>
+                (l.name || '').toLowerCase().includes(q) ||
+                (l.subject || '').toLowerCase().includes(q) ||
+                (l.recipient || '').toLowerCase().includes(q)
+            );
+        }
+
+        // Filter by status
+        if (activeStatus !== 'all') {
+            all = all.filter(l => (l.status || 'draft') === activeStatus);
+        }
+
+        if (!all.length) {
+            container.innerHTML = `
+                <div class="letters-page-empty">
+                    <div class="icon">📭</div>
+                    <p>${t('no_saved_letters')}</p>
+                    <br>
+                    <a href="index.html" class="action-btn btn-primary">${t('btn_create_new')}</a>
+                </div>`;
+            return;
+        }
+
+        // Group by category
+        const groups = {};
+        all.forEach(l => {
+            const cat = l.category || 'free';
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(l);
+        });
+
+        // Order: free first, then alphabetical
+        const order = ['free', 'kuendigung', 'mahnung', 'widerspruch', 'bewerbung', 'reklamation', 'widerruf', 'mietminderung', 'abmahnung', 'dsgvo', 'vollmacht', 'schadensersatz', 'ratenzahlung', 'mietkaution'];
+        const sortedCats = order.filter(k => groups[k]);
+        // Add any categories not in the predefined order
+        Object.keys(groups).forEach(k => { if (!order.includes(k)) sortedCats.push(k); });
+
+        let html = '';
+        sortedCats.forEach(catKey => {
+            const cat = CATEGORIES[catKey] || CATEGORIES.free;
+            const letters = groups[catKey];
+            const lang = HintLangManager.get();
+            const catName = lang === 'de' ? cat.name : lang === 'ru' ? cat.nameRu : cat.nameEn;
+            html += `<div class="letters-category">
+                <div class="letters-category-header">
+                    <span class="letters-category-icon">${cat.icon}</span>
+                    <span class="letters-category-name">${catName}</span>
+                    <span class="letters-category-count">${letters.length}</span>
+                </div>`;
+
+            letters.forEach(l => {
+                const meta = [l.recipient, l.subject].filter(Boolean).join(' — ');
+                const formLabel = l.form || (l.data && l.data.form) || 'B';
+                const formCls = formLabel === 'C4' ? 'form-badge-c4' : formLabel === 'A' ? 'form-badge-a' : 'form-badge-b';
+                const status = ['draft','sent','archived'].includes(l.status) ? l.status : 'draft';
+                const statusLabel = t('status_' + status);
+                const statusCls = 'status-badge status-' + status;
+                html += `<div class="lp-card">
+                    <div class="lp-card-info" data-open="${escapeHtml(l.id)}">
+                        <div class="lp-card-name">${escapeHtml(l.name)}</div>
+                        <div class="lp-card-meta">${formatDateShort(l.date)}${meta ? ' · ' + escapeHtml(meta) : ''}</div>
+                    </div>
+                    <span class="${statusCls}">${statusLabel}</span>
+                    <span class="form-badge ${formCls}">${escapeHtml(formLabel)}</span>
+                    <div class="lp-card-actions">
+                        <button class="lp-card-btn" data-open="${escapeHtml(l.id)}" title="${t('btn_open')}">${t('btn_open')}</button>
+                        <select class="lp-status-select" data-status-id="${escapeHtml(l.id)}">
+                            <option value="draft" ${status === 'draft' ? 'selected' : ''}>${t('status_draft')}</option>
+                            <option value="sent" ${status === 'sent' ? 'selected' : ''}>${t('status_sent')}</option>
+                            <option value="archived" ${status === 'archived' ? 'selected' : ''}>${t('status_archived')}</option>
+                        </select>
+                        <button class="lp-card-btn" data-dup="${escapeHtml(l.id)}" title="${t('btn_duplicate')}">⧉</button>
+                        <button class="lp-card-btn btn-delete" data-del="${escapeHtml(l.id)}" title="${t('btn_delete')}">✕</button>
+                    </div>
+                </div>`;
+            });
+
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+
+        // Event listeners
+        container.querySelectorAll('[data-open]').forEach(el => {
+            el.addEventListener('click', () => {
+                window.location.href = 'editor.html?load=' + encodeURIComponent(el.dataset.open);
+            });
+        });
+
+        container.querySelectorAll('[data-status-id]').forEach(sel => {
+            sel.addEventListener('change', () => {
+                LettersManager.setStatus(sel.dataset.statusId, sel.value);
+                render();
+            });
+        });
+
+        container.querySelectorAll('[data-dup]').forEach(el => {
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                LettersManager.duplicate(el.dataset.dup);
+                render();
+            });
+        });
+
+        container.querySelectorAll('[data-del]').forEach(el => {
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                const all = LettersManager.getAll();
+                const letter = all.find(l => l.id === el.dataset.del);
+                if (letter && confirm(t('delete_letter', { name: letter.name }))) {
+                    LettersManager.delete(el.dataset.del);
+                    render();
+                }
+            });
+        });
+    }
+
+    // Search
+    document.getElementById('letters-search').addEventListener('input', e => {
+        searchQuery = e.target.value.trim();
+        render();
+    });
+
+    // Status filter pills
+    document.querySelectorAll('#filter-status .filter-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#filter-status .filter-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeStatus = btn.dataset.status;
+            render();
+        });
+    });
+
+    render();
+
+    // Re-apply hint language after dynamic content is built
+    HintLangManager.apply();
+
+    // Rebuild on language change
+    HintLangManager.onApply(() => render());
+
+    // Export
+    document.getElementById('btn-export').addEventListener('click', () => {
+        LettersManager.exportAll();
+    });
+
+    // Import
+    document.getElementById('import-file').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+            const count = await LettersManager.importAll(file);
+            alert(t('imported', { count: count }));
+            render();
+        } catch (err) {
+            alert(t('import_error') + err.message);
+        }
+        e.target.value = '';
+    });
+
+})();
+</script>
+
+</body>
+</html>

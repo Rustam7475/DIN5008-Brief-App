@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔑 DIN 5008 — Генератор лицензионных ключей</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #64748b; margin-bottom: 32px; font-size: 0.95rem; }
+
+        .container {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 28px;
+            width: 100%;
+            max-width: 680px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .controls label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .controls input[type="number"] {
+            width: 80px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .controls input[type="number"]:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform .1s, box-shadow .15s;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+        }
+        .btn-generate:hover { box-shadow: 0 4px 16px rgba(245,158,11,0.35); }
+
+        .btn-copy {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .btn-copy:hover { background: #475569; }
+
+        .btn-export {
+            background: #1d4ed8;
+            color: #fff;
+        }
+        .btn-export:hover { box-shadow: 0 4px 16px rgba(29,78,216,0.35); }
+
+        .btn-clear {
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+        .btn-clear:hover { background: rgba(239,68,68,0.1); }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 12px 18px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Keys area */
+        .keys-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .keys-header h3 {
+            font-size: 1rem;
+            color: #94a3b8;
+        }
+        .keys-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .keys-list {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 16px;
+            max-height: 420px;
+            overflow-y: auto;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            user-select: all;
+        }
+        .keys-list::-webkit-scrollbar { width: 6px; }
+        .keys-list::-webkit-scrollbar-track { background: transparent; }
+        .keys-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        .key-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background .1s;
+        }
+        .key-line:hover { background: #1e293b; }
+        .key-num {
+            color: #475569;
+            font-size: 0.75rem;
+            min-width: 24px;
+            text-align: right;
+        }
+        .key-value {
+            color: #fbbf24;
+            letter-spacing: 1px;
+            flex: 1;
+        }
+        .key-copy-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: color .1s, background .1s;
+        }
+        .key-copy-btn:hover { color: #f59e0b; background: rgba(245,158,11,0.1); }
+
+        .empty-state {
+            text-align: center;
+            color: #475569;
+            padding: 40px;
+        }
+        .empty-state .icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+        /* Validate section */
+        .validate-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+        .validate-section h3 {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+        .validate-row {
+            display: flex;
+            gap: 10px;
+        }
+        .validate-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .validate-row input:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+        .validate-result {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            min-height: 1.4em;
+        }
+        .valid { color: #22c55e; }
+        .invalid { color: #ef4444; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #22c55e;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            transition: transform .3s ease;
+            z-index: 100;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 500px) {
+            .controls { flex-direction: column; align-items: stretch; }
+            .stats { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔑 Генератор лицензионных ключей</h1>
+<p class="subtitle">DIN 5008 Brief-App — PRO License Keys</p>
+
+<div class="container">
+    <!-- Controls -->
+    <div class="controls">
+        <label for="count">Количество:</label>
+        <input type="number" id="count" value="10" min="1" max="1000">
+        <button class="btn btn-generate" id="btn-generate">⚡ Сгенерировать</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value" id="stat-generated">0</div>
+            <div class="stat-label">Сгенерировано</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Всего в списке</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="stat-valid">✓</div>
+            <div class="stat-label">Все валидны</div>
+        </div>
+    </div>
+
+    <!-- Keys List -->
+    <div class="keys-header">
+        <h3>Ключи</h3>
+        <div class="keys-actions">
+            <button class="btn btn-copy" id="btn-copy-all" disabled>📋 Копировать все</button>
+            <button class="btn btn-export" id="btn-export" disabled>💾 Экспорт .txt</button>
+            <button class="btn btn-clear" id="btn-clear" disabled>✕ Очистить</button>
+        </div>
+    </div>
+    <div class="keys-list" id="keys-list">
+        <div class="empty-state">
+            <div class="icon">🔐</div>
+            <div>Нажмите «Сгенерировать» для создания ключей</div>
+        </div>
+    </div>
+
+    <!-- Validate -->
+    <div class="validate-section">
+        <h3>🔍 Проверить ключ</h3>
+        <div class="validate-row">
+            <input type="text" id="validate-input" placeholder="DIN5008-XXXX-XXXX-XXXX" maxlength="22" spellcheck="false" autocomplete="off">
+            <button class="btn btn-generate" id="btn-validate" style="padding:10px 16px;">Проверить</button>
+        </div>
+        <div class="validate-result" id="validate-result"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Скопировано! ✓</div>
+
+<script>
+(function() {
+    'use strict';
+
+    const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let allKeys = [];
+
+    // --- Key generation ---
+    function randomGroup() {
+        let s = '';
+        for (let i = 0; i < 4; i++) s += CHARS[Math.floor(Math.random() * CHARS.length)];
+        return s;
+    }
+
+    function generateKey() {
+        const g1 = randomGroup();
+        const g2 = randomGroup();
+        const payload = g1 + g2;
+        let sum = 0;
+        for (let i = 0; i < payload.length; i++) sum += payload.charCodeAt(i);
+        const check = (sum % 97).toString(36).toUpperCase().padStart(2, '0');
+        const g3 = check + randomGroup().substring(0, 2);
+        return 'DIN5008-' + g1 + '-' + g2 + '-' + g3;
+    }
+
+    function validateKey(key) {
+        const re = /^DIN5008-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/;
+        const m = (key || '').trim().toUpperCase().match(re);
+        if (!m) return false;
+        const payload = m[1] + m[2];
+        let sum = 0;
+        for (let i = 0; i < payload.length; i++) sum += payload.charCodeAt(i);
+        const check = (sum % 97).toString(36).toUpperCase().padStart(2, '0');
+        return m[3].substring(0, 2) === check;
+    }
+
+    // --- UI ---
+    const countInput = document.getElementById('count');
+    const btnGenerate = document.getElementById('btn-generate');
+    const btnCopyAll = document.getElementById('btn-copy-all');
+    const btnExport = document.getElementById('btn-export');
+    const btnClear = document.getElementById('btn-clear');
+    const keysList = document.getElementById('keys-list');
+    const statGenerated = document.getElementById('stat-generated');
+    const statTotal = document.getElementById('stat-total');
+    const validateInput = document.getElementById('validate-input');
+    const btnValidate = document.getElementById('btn-validate');
+    const validateResult = document.getElementById('validate-result');
+    const toast = document.getElementById('toast');
+
+    function showToast(text) {
+        toast.textContent = text;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function updateStats(justGenerated) {
+        statGenerated.textContent = justGenerated || 0;
+        statTotal.textContent = allKeys.length;
+    }
+
+    function renderKeys() {
+        if (!allKeys.length) {
+            keysList.innerHTML = '<div class="empty-state"><div class="icon">🔐</div><div>Нажмите «Сгенерировать» для создания ключей</div></div>';
+            btnCopyAll.disabled = true;
+            btnExport.disabled = true;
+            btnClear.disabled = true;
+            return;
+        }
+        btnCopyAll.disabled = false;
+        btnExport.disabled = false;
+        btnClear.disabled = false;
+
+        keysList.innerHTML = allKeys.map((key, i) =>
+            '<div class="key-line">' +
+                '<span class="key-num">' + (i + 1) + '.</span>' +
+                '<span class="key-value">' + key + '</span>' +
+                '<button class="key-copy-btn" data-key="' + key + '" title="Копировать">📋</button>' +
+            '</div>'
+        ).join('');
+
+        // Scroll to bottom to show new keys
+        keysList.scrollTop = keysList.scrollHeight;
+    }
+
+    // Generate
+    btnGenerate.addEventListener('click', () => {
+        const count = Math.min(Math.max(parseInt(countInput.value) || 1, 1), 1000);
+        countInput.value = count;
+        const newKeys = [];
+        for (let i = 0; i < count; i++) {
+            newKeys.push(generateKey());
+        }
+        allKeys = allKeys.concat(newKeys);
+        updateStats(count);
+        renderKeys();
+    });
+
+    // Copy single key
+    keysList.addEventListener('click', (e) => {
+        const btn = e.target.closest('.key-copy-btn');
+        if (!btn) return;
+        const key = btn.dataset.key;
+        navigator.clipboard.writeText(key).then(() => showToast('Ключ скопирован: ' + key));
+    });
+
+    // Copy all
+    btnCopyAll.addEventListener('click', () => {
+        const text = allKeys.join('\n');
+        navigator.clipboard.writeText(text).then(() => showToast('Все ' + allKeys.length + ' ключей скопированы!'));
+    });
+
+    // Export
+    btnExport.addEventListener('click', () => {
+        const text = 'DIN 5008 Brief-App — PRO License Keys\n'
+            + 'Generated: ' + new Date().toLocaleString() + '\n'
+            + 'Count: ' + allKeys.length + '\n'
+            + '─'.repeat(40) + '\n\n'
+            + allKeys.join('\n') + '\n';
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'DIN5008_License_Keys_' + new Date().toISOString().slice(0, 10) + '.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Файл сохранён!');
+    });
+
+    // Clear
+    btnClear.addEventListener('click', () => {
+        if (allKeys.length && !confirm('Очистить все ' + allKeys.length + ' ключей?')) return;
+        allKeys = [];
+        updateStats(0);
+        renderKeys();
+    });
+
+    // Validate
+    function doValidate() {
+        const key = validateInput.value.trim().toUpperCase();
+        if (!key) { validateResult.textContent = ''; return; }
+        if (validateKey(key)) {
+            validateResult.innerHTML = '<span class="valid">✓ Ключ валиден</span>';
+        } else {
+            validateResult.innerHTML = '<span class="invalid">✗ Ключ невалиден</span>';
+        }
+    }
+    btnValidate.addEventListener('click', doValidate);
+    validateInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doValidate(); });
+    validateInput.addEventListener('input', () => { validateResult.textContent = ''; });
+
+    // Enter on count input
+    countInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') btnGenerate.click(); });
+
+    updateStats(0);
+})();
+</script>
+
+</body>
+</html>

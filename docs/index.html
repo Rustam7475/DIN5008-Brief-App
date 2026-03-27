@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIN 5008 Brief Editor – Geschäftsbriefe erstellen</title>
+    <meta name="description" content="DIN 5008 Brief erstellen — Desktop-App mit 13+ Geschäftsbrief-Vorlagen, PDF-Export, Kontaktverwaltung. Kostenlos für Windows, macOS und Linux. Kündigung, Mahnung, Widerspruch und mehr.">
+    <meta name="keywords" content="DIN 5008 Brief erstellen, Geschäftsbrief Vorlage, Brief schreiben, Briefvorlage, Kündigung schreiben, Mahnung Vorlage, DIN 5008 Editor, Geschäftsbrief erstellen">
+    <meta name="author" content="DIN 5008 Brief Editor">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="DIN 5008 Brief Editor – Geschäftsbriefe erstellen">
+    <meta property="og:description" content="Desktop-App für normgerechte Geschäftsbriefe nach DIN 5008. 13+ Vorlagen, PDF-Export, Kontaktverwaltung. Kostenlos starten.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:image" content="screenshot-hero.png">
+    <meta property="og:image:alt" content="DIN 5008 Brief Editor — Briefvorschau im A4-Format">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DIN 5008 Brief Editor – Geschäftsbriefe erstellen">
+    <meta name="twitter:description" content="Desktop-App für normgerechte Geschäftsbriefe nach DIN 5008. 13+ Vorlagen, PDF-Export, Kontaktverwaltung.">
+    <meta name="twitter:image" content="screenshot-hero.png">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "DIN 5008 Brief Editor",
+        "operatingSystem": "Windows, macOS, Linux",
+        "applicationCategory": "BusinessApplication",
+        "description": "Desktop-App zur Erstellung professioneller Geschäftsbriefe nach DIN 5008 mit 13+ Vorlagen, PDF-Export und Kontaktverwaltung.",
+        "softwareVersion": "3.1.0",
+        "offers": [
+            {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "EUR",
+                "description": "Kostenlose Version mit 3 Vorlagen"
+            },
+            {
+                "@type": "Offer",
+                "price": "14.99",
+                "priceCurrency": "EUR",
+                "description": "PRO-Version — einmalige Zahlung, lebenslange Lizenz"
+            }
+        ],
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "12"
+        }
+    }
+    </script>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="lp-nav">
+    <div class="lp-nav-inner">
+        <a href="#" class="lp-brand">📄 DIN 5008 Brief Editor</a>
+        <div class="lp-nav-links">
+            <a href="#features" data-i18n="nav_features">Funktionen</a>
+            <a href="#screenshots">Screenshots</a>
+            <a href="#pricing" data-i18n="nav_pricing">Preise</a>
+            <a href="#download">Download</a>
+            <a href="#faq">FAQ</a>
+        </div>
+        <div class="lp-nav-controls">
+            <div class="lp-lang-switcher">
+                <button class="lp-lang-btn active" data-lang="de">DE</button>
+                <button class="lp-lang-btn" data-lang="ru">RU</button>
+                <button class="lp-lang-btn" data-lang="en">EN</button>
+            </div>
+            <button class="lp-theme-toggle" aria-label="Farbmodus umschalten" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="lp-hero">
+    <div class="lp-hero-inner">
+        <h1 data-i18n="hero_title">DIN 5008 Geschäftsbriefe —<br>einfach, schnell und normgerecht</h1>
+        <p class="lp-hero-subtitle" data-i18n="hero_subtitle">Desktop-App mit 13+ Vorlagen für Kündigungen, Mahnungen, Bewerbungen und mehr.<br>Kostenlos starten — kein Konto, keine Cloud.</p>
+        <div class="lp-hero-actions">
+            <a href="#download" class="lp-btn lp-btn-primary" data-i18n="btn_download">⬇ Kostenlos herunterladen</a>
+            <a href="https://pavelgratique.gumroad.com/l/din5008-brief-app" target="_blank" rel="noopener" class="lp-btn lp-btn-accent" data-i18n="btn_buy_pro">⭐ PRO kaufen — 14,99 €</a>
+        </div>
+        <div class="lp-hero-platforms" data-i18n="hero_platforms">Verfügbar für <strong>Windows</strong>, <strong>macOS</strong> und <strong>Linux</strong></div>
+    </div>
+</section>
+
+<!-- Screenshots -->
+<section class="lp-section" id="screenshots">
+    <h2 data-i18n="screenshots_title">So sieht die App aus</h2>
+    <p class="lp-section-subtitle" data-i18n="screenshots_subtitle">Professionelles Layout nach DIN 5008 — mit Live-Vorschau, Vorlagen und Kontaktverwaltung.</p>
+    <div class="lp-screenshots-grid">
+        <div class="lp-screenshot-card">
+            <div class="lp-window-chrome"><span></span><span></span><span></span></div>
+            <div class="lp-screenshot-slot">
+                <div class="lp-screenshot-placeholder">
+                    <span class="lp-screenshot-icon">📝</span>
+                    <span data-i18n="shot_editor">Briefeditor mit Live-Vorschau</span>
+                </div>
+            </div>
+        </div>
+        <div class="lp-screenshot-card">
+            <div class="lp-window-chrome"><span></span><span></span><span></span></div>
+            <div class="lp-screenshot-slot">
+                <div class="lp-screenshot-placeholder">
+                    <span class="lp-screenshot-icon">📋</span>
+                    <span data-i18n="shot_templates">13+ Briefvorlagen</span>
+                </div>
+            </div>
+        </div>
+        <div class="lp-screenshot-card">
+            <div class="lp-window-chrome"><span></span><span></span><span></span></div>
+            <div class="lp-screenshot-slot">
+                <div class="lp-screenshot-placeholder">
+                    <span class="lp-screenshot-icon">👤</span>
+                    <span data-i18n="shot_profiles">Profile &amp; Kontakte</span>
+                </div>
+            </div>
+        </div>
+        <div class="lp-screenshot-card">
+            <div class="lp-window-chrome"><span></span><span></span><span></span></div>
+            <div class="lp-screenshot-slot">
+                <div class="lp-screenshot-placeholder">
+                    <span class="lp-screenshot-icon">🌙</span>
+                    <span>Dark Mode</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="lp-section lp-section-alt" id="features">
+    <h2 data-i18n="features_title">Alles, was Sie für Geschäftsbriefe brauchen</h2>
+    <div class="lp-features-grid">
+        <div class="lp-feature-card">
+            <div class="lp-feature-icon">📐</div>
+            <h3 data-i18n="feat_din_title">DIN 5008 konform</h3>
+            <p data-i18n="feat_din_desc">Automatische Einhaltung aller Maße — Anschriftfeld, Faltmarken, Seitenränder. Form A, Form B und C4-Format.</p>
+        </div>
+        <div class="lp-feature-card">
+            <div class="lp-feature-icon">📋</div>
+            <h3 data-i18n="feat_tpl_title">13+ Vorlagen</h3>
+            <p data-i18n="feat_tpl_desc">Kündigung, Mahnung, Widerspruch, Bewerbung, Reklamation, DSGVO-Auskunft — rechtssicher und professionell.</p>
+        </div>
+        <div class="lp-feature-card">
+            <div class="lp-feature-icon">👁️</div>
+            <h3 data-i18n="feat_preview_title">Live-Vorschau</h3>
+            <p data-i18n="feat_preview_desc">Sehen Sie Ihren Brief in Echtzeit im A4-Format — genau so, wie er gedruckt oder als PDF exportiert wird.</p>
+        </div>
+        <div class="lp-feature-card">
+            <div class="lp-feature-icon">📄</div>
+            <h3 data-i18n="feat_pdf_title">PDF-Export</h3>
+            <p data-i18n="feat_pdf_desc">Exportieren Sie Ihren Brief als hochauflösende PDF — bereit zum Drucken oder Versenden per E-Mail.</p>
+        </div>
+        <div class="lp-feature-card">
+            <div class="lp-feature-icon">👤</div>
+            <h3 data-i18n="feat_profiles_title">Profile &amp; Kontakte</h3>
+            <p data-i18n="feat_profiles_desc">Mehrere Absender-Profile mit Logo und Unterschrift. Kontaktverwaltung mit CSV/JSON-Import.</p>
+        </div>
+        <div class="lp-feature-card">
+            <div class="lp-feature-icon">🌐</div>
+            <h3 data-i18n="feat_lang_title">Dreisprachig &amp; Dark Mode</h3>
+            <p data-i18n="feat_lang_desc">Oberfläche auf Deutsch, Englisch und Russisch. Integrierter dunkler Modus für angenehmes Arbeiten.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Table: Free vs PRO -->
+<section class="lp-section" id="pricing">
+    <h2 data-i18n="pricing_title">Kostenlos starten, auf PRO upgraden</h2>
+    <p class="lp-section-subtitle" data-i18n="pricing_subtitle">Die kostenlose Version ist vollständig nutzbar — PRO schaltet alle Funktionen frei.</p>
+    <div class="lp-comparison-wrap">
+        <table class="lp-comparison-table">
+            <thead>
+                <tr>
+                    <th data-i18n="tbl_feature">Funktion</th>
+                    <th data-i18n="tbl_free">Kostenlos</th>
+                    <th class="lp-col-pro">PRO — 14,99 €</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td data-i18n="tbl_din">DIN 5008 Formatierung (A, B, C4)</td><td>✓</td><td>✓</td></tr>
+                <tr><td data-i18n="tbl_preview">Live-Vorschau im A4-Format</td><td>✓</td><td>✓</td></tr>
+                <tr><td data-i18n="tbl_fold">Faltmarken &amp; Fensterumschlag</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Dark Mode</td><td>✓</td><td>✓</td></tr>
+                <tr><td data-i18n="tbl_trilingual">Dreisprachig (DE / EN / RU)</td><td>✓</td><td>✓</td></tr>
+                <tr><td data-i18n="tbl_templates">Briefvorlagen</td><td data-i18n="tbl_tpl_free">3 + freier Modus</td><td data-i18n="tbl_tpl_pro"><strong>13+ Vorlagen</strong></td></tr>
+                <tr><td data-i18n="tbl_letters">Gespeicherte Briefe</td><td>5</td><td data-i18n="tbl_unlimited"><strong>Unbegrenzt</strong></td></tr>
+                <tr><td data-i18n="tbl_contacts">Kontakte</td><td>5</td><td data-i18n="tbl_unlimited2"><strong>Unbegrenzt</strong></td></tr>
+                <tr><td data-i18n="tbl_profiles">Absender-Profile</td><td>1</td><td data-i18n="tbl_unlimited3"><strong>Unbegrenzt</strong></td></tr>
+                <tr><td>PDF-Export</td><td class="lp-cell-no">✗</td><td>✓</td></tr>
+                <tr><td data-i18n="tbl_backup">Backup Import/Export</td><td class="lp-cell-no">✗</td><td>✓</td></tr>
+                <tr><td data-i18n="tbl_logo">Logo &amp; Handunterschrift</td><td class="lp-cell-no">✗</td><td>✓</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="lp-pricing-cta">
+        <a href="#download" class="lp-btn lp-btn-secondary" data-i18n="btn_download">⬇ Kostenlos herunterladen</a>
+        <a href="https://pavelgratique.gumroad.com/l/din5008-brief-app" target="_blank" rel="noopener" class="lp-btn lp-btn-accent" data-i18n="btn_buy_pro_cart">🛒 PRO kaufen — 14,99 €</a>
+    </div>
+</section>
+
+<!-- Download -->
+<section class="lp-section lp-section-alt" id="download">
+    <h2 data-i18n="download_title">Jetzt herunterladen</h2>
+    <p class="lp-section-subtitle" data-i18n="download_subtitle">Kein Konto, keine Cloud — Ihre Daten bleiben auf Ihrem Computer.</p>
+    <div class="lp-download-grid">
+        <a href="#" class="lp-download-card">
+            <span class="lp-download-icon">🍎</span>
+            <span class="lp-download-platform">macOS</span>
+            <span class="lp-download-format">.dmg (Universal)</span>
+        </a>
+        <a href="#" class="lp-download-card">
+            <span class="lp-download-icon">🪟</span>
+            <span class="lp-download-platform">Windows</span>
+            <span class="lp-download-format">.exe (64-bit)</span>
+        </a>
+        <a href="#" class="lp-download-card">
+            <span class="lp-download-icon">🐧</span>
+            <span class="lp-download-platform">Linux</span>
+            <span class="lp-download-format">.AppImage</span>
+        </a>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="lp-section" id="faq">
+    <h2 data-i18n="faq_title">Häufige Fragen</h2>
+    <div class="lp-faq-list">
+        <details class="lp-faq-item">
+            <summary data-i18n="faq1_q">Was ist DIN 5008 und warum ist sie wichtig?</summary>
+            <p data-i18n="faq1_a">DIN 5008 ist die deutsche Norm für Geschäftsbriefe. Sie regelt Seitenränder, Anschriftfeld-Position, Faltmarken und Schriftgrößen — damit Ihr Brief professionell aussieht und korrekt in Fensterbriefumschläge passt. Unser Editor übernimmt die Formatierung automatisch.</p>
+        </details>
+        <details class="lp-faq-item">
+            <summary data-i18n="faq2_q">Kann ich die App kostenlos nutzen?</summary>
+            <p data-i18n="faq2_a">Ja! Die kostenlose Version enthält 3 Vorlagen (Kündigung, Mahnung, Widerspruch), den freien Briefmodus, Live-Vorschau und alle DIN-5008-Funktionen. Für PDF-Export und alle 13+ Vorlagen benötigen Sie die PRO-Version.</p>
+        </details>
+        <details class="lp-faq-item">
+            <summary data-i18n="faq3_q">Ist die PRO-Lizenz einmalig oder ein Abonnement?</summary>
+            <p data-i18n="faq3_a">Die PRO-Lizenz ist eine <strong>einmalige Zahlung von 14,99 €</strong> — kein Abo, keine versteckten Kosten. Sie erhalten einen Lizenzschlüssel, der lebenslang gültig ist und auf allen Ihren Geräten funktioniert.</p>
+        </details>
+        <details class="lp-faq-item">
+            <summary data-i18n="faq4_q">Werden meine Daten in die Cloud übertragen?</summary>
+            <p data-i18n="faq4_a">Nein. Alle Ihre Daten (Briefe, Profile, Kontakte) werden ausschließlich lokal auf Ihrem Computer gespeichert. Es gibt keine Cloud-Verbindung und kein Benutzerkonto.</p>
+        </details>
+        <details class="lp-faq-item">
+            <summary data-i18n="faq5_q">Auf welchen Betriebssystemen läuft die App?</summary>
+            <p data-i18n="faq5_a">Die App läuft auf <strong>Windows</strong> (64-bit), <strong>macOS</strong> (Intel &amp; Apple Silicon) und <strong>Linux</strong> (AppImage). Alle Installationsdateien finden Sie im Download-Bereich.</p>
+        </details>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="lp-footer">
+    <div class="lp-footer-inner">
+        <div class="lp-footer-brand">📄 DIN 5008 Brief Editor</div>
+        <div class="lp-footer-links">
+            <a href="#features" data-i18n="nav_features">Funktionen</a>
+            <a href="#pricing" data-i18n="nav_pricing">Preise</a>
+            <a href="#download">Download</a>
+            <a href="#faq">FAQ</a>
+        </div>
+        <div class="lp-footer-impressum">
+            <strong>Impressum:</strong> Angaben gemäß § 5 TMG —
+            Kontakt: <a href="mailto:support@example.com">support@example.com</a>
+        </div>
+        <div class="lp-footer-copy" data-i18n="footer_copy">© 2026 DIN 5008 Brief Editor. Alle Rechte vorbehalten.</div>
+    </div>
+</footer>
+
+<!-- i18n + Theme script -->
+<script>
+/* ── Translations ── */
+const LP_I18N = {
+de: {
+    nav_features: 'Funktionen',
+    nav_pricing: 'Preise',
+    hero_title: 'DIN 5008 Geschäftsbriefe —<br>einfach, schnell und normgerecht',
+    hero_subtitle: 'Desktop-App mit 13+ Vorlagen für Kündigungen, Mahnungen, Bewerbungen und mehr.<br>Kostenlos starten — kein Konto, keine Cloud.',
+    btn_download: '⬇ Kostenlos herunterladen',
+    btn_buy_pro: '⭐ PRO kaufen — 14,99 €',
+    btn_buy_pro_cart: '🛒 PRO kaufen — 14,99 €',
+    hero_platforms: 'Verfügbar für <strong>Windows</strong>, <strong>macOS</strong> und <strong>Linux</strong>',
+    screenshots_title: 'So sieht die App aus',
+    screenshots_subtitle: 'Professionelles Layout nach DIN 5008 — mit Live-Vorschau, Vorlagen und Kontaktverwaltung.',
+    shot_editor: 'Briefeditor mit Live-Vorschau',
+    shot_templates: '13+ Briefvorlagen',
+    shot_profiles: 'Profile & Kontakte',
+    features_title: 'Alles, was Sie für Geschäftsbriefe brauchen',
+    feat_din_title: 'DIN 5008 konform',
+    feat_din_desc: 'Automatische Einhaltung aller Maße — Anschriftfeld, Faltmarken, Seitenränder. Form A, Form B und C4-Format.',
+    feat_tpl_title: '13+ Vorlagen',
+    feat_tpl_desc: 'Kündigung, Mahnung, Widerspruch, Bewerbung, Reklamation, DSGVO-Auskunft — rechtssicher und professionell.',
+    feat_preview_title: 'Live-Vorschau',
+    feat_preview_desc: 'Sehen Sie Ihren Brief in Echtzeit im A4-Format — genau so, wie er gedruckt oder als PDF exportiert wird.',
+    feat_pdf_title: 'PDF-Export',
+    feat_pdf_desc: 'Exportieren Sie Ihren Brief als hochauflösende PDF — bereit zum Drucken oder Versenden per E-Mail.',
+    feat_profiles_title: 'Profile & Kontakte',
+    feat_profiles_desc: 'Mehrere Absender-Profile mit Logo und Unterschrift. Kontaktverwaltung mit CSV/JSON-Import.',
+    feat_lang_title: 'Dreisprachig & Dark Mode',
+    feat_lang_desc: 'Oberfläche auf Deutsch, Englisch und Russisch. Integrierter dunkler Modus für angenehmes Arbeiten.',
+    pricing_title: 'Kostenlos starten, auf PRO upgraden',
+    pricing_subtitle: 'Die kostenlose Version ist vollständig nutzbar — PRO schaltet alle Funktionen frei.',
+    tbl_feature: 'Funktion',
+    tbl_free: 'Kostenlos',
+    tbl_din: 'DIN 5008 Formatierung (A, B, C4)',
+    tbl_preview: 'Live-Vorschau im A4-Format',
+    tbl_fold: 'Faltmarken & Fensterumschlag',
+    tbl_trilingual: 'Dreisprachig (DE / EN / RU)',
+    tbl_templates: 'Briefvorlagen',
+    tbl_tpl_free: '3 + freier Modus',
+    tbl_tpl_pro: '<strong>13+ Vorlagen</strong>',
+    tbl_letters: 'Gespeicherte Briefe',
+    tbl_contacts: 'Kontakte',
+    tbl_profiles: 'Absender-Profile',
+    tbl_unlimited: '<strong>Unbegrenzt</strong>',
+    tbl_unlimited2: '<strong>Unbegrenzt</strong>',
+    tbl_unlimited3: '<strong>Unbegrenzt</strong>',
+    tbl_backup: 'Backup Import/Export',
+    tbl_logo: 'Logo & Handunterschrift',
+    download_title: 'Jetzt herunterladen',
+    download_subtitle: 'Kein Konto, keine Cloud — Ihre Daten bleiben auf Ihrem Computer.',
+    faq_title: 'Häufige Fragen',
+    faq1_q: 'Was ist DIN 5008 und warum ist sie wichtig?',
+    faq1_a: 'DIN 5008 ist die deutsche Norm für Geschäftsbriefe. Sie regelt Seitenränder, Anschriftfeld-Position, Faltmarken und Schriftgrößen — damit Ihr Brief professionell aussieht und korrekt in Fensterbriefumschläge passt. Unser Editor übernimmt die Formatierung automatisch.',
+    faq2_q: 'Kann ich die App kostenlos nutzen?',
+    faq2_a: 'Ja! Die kostenlose Version enthält 3 Vorlagen (Kündigung, Mahnung, Widerspruch), den freien Briefmodus, Live-Vorschau und alle DIN-5008-Funktionen. Für PDF-Export und alle 13+ Vorlagen benötigen Sie die PRO-Version.',
+    faq3_q: 'Ist die PRO-Lizenz einmalig oder ein Abonnement?',
+    faq3_a: 'Die PRO-Lizenz ist eine <strong>einmalige Zahlung von 14,99 €</strong> — kein Abo, keine versteckten Kosten. Sie erhalten einen Lizenzschlüssel, der lebenslang gültig ist und auf allen Ihren Geräten funktioniert.',
+    faq4_q: 'Werden meine Daten in die Cloud übertragen?',
+    faq4_a: 'Nein. Alle Ihre Daten (Briefe, Profile, Kontakte) werden ausschließlich lokal auf Ihrem Computer gespeichert. Es gibt keine Cloud-Verbindung und kein Benutzerkonto.',
+    faq5_q: 'Auf welchen Betriebssystemen läuft die App?',
+    faq5_a: 'Die App läuft auf <strong>Windows</strong> (64-bit), <strong>macOS</strong> (Intel & Apple Silicon) und <strong>Linux</strong> (AppImage). Alle Installationsdateien finden Sie im Download-Bereich.',
+    footer_copy: '© 2026 DIN 5008 Brief Editor. Alle Rechte vorbehalten.'
+},
+ru: {
+    nav_features: 'Функции',
+    nav_pricing: 'Цены',
+    hero_title: 'Деловые письма по DIN 5008 —<br>просто, быстро и по стандарту',
+    hero_subtitle: 'Настольное приложение с 13+ шаблонами: расторжение договора, напоминание об оплате, резюме и другие.<br>Начните бесплатно — без аккаунта, без облака.',
+    btn_download: '⬇ Скачать бесплатно',
+    btn_buy_pro: '⭐ Купить PRO — 14,99 €',
+    btn_buy_pro_cart: '🛒 Купить PRO — 14,99 €',
+    hero_platforms: 'Доступно для <strong>Windows</strong>, <strong>macOS</strong> и <strong>Linux</strong>',
+    screenshots_title: 'Как выглядит приложение',
+    screenshots_subtitle: 'Профессиональный макет по DIN 5008 — с предпросмотром, шаблонами и управлением контактами.',
+    shot_editor: 'Редактор с предпросмотром',
+    shot_templates: '13+ шаблонов писем',
+    shot_profiles: 'Профили и контакты',
+    features_title: 'Всё, что нужно для деловых писем',
+    feat_din_title: 'По стандарту DIN 5008',
+    feat_din_desc: 'Автоматическое соблюдение всех размеров — поле адреса, линии сгиба, поля страницы. Form A, Form B и C4.',
+    feat_tpl_title: '13+ шаблонов',
+    feat_tpl_desc: 'Расторжение договора, напоминание, возражение, резюме, рекламация, запрос по DSGVO — юридически корректные.',
+    feat_preview_title: 'Предпросмотр',
+    feat_preview_desc: 'Видите письмо в реальном времени в формате A4 — точно так, как оно будет напечатано или экспортировано в PDF.',
+    feat_pdf_title: 'Экспорт в PDF',
+    feat_pdf_desc: 'Экспортируйте письмо в PDF высокого разрешения — готовый к печати или отправке по электронной почте.',
+    feat_profiles_title: 'Профили и контакты',
+    feat_profiles_desc: 'Несколько профилей отправителя с логотипом и подписью. Управление контактами с CSV/JSON-импортом.',
+    feat_lang_title: 'Три языка и тёмная тема',
+    feat_lang_desc: 'Интерфейс на немецком, английском и русском. Встроенная тёмная тема для комфортной работы.',
+    pricing_title: 'Начните бесплатно, обновите до PRO',
+    pricing_subtitle: 'Бесплатная версия полностью функциональна — PRO открывает все возможности.',
+    tbl_feature: 'Функция',
+    tbl_free: 'Бесплатно',
+    tbl_din: 'Форматирование DIN 5008 (A, B, C4)',
+    tbl_preview: 'Предпросмотр в формате A4',
+    tbl_fold: 'Линии сгиба и оконный конверт',
+    tbl_trilingual: 'Три языка (DE / EN / RU)',
+    tbl_templates: 'Шаблоны писем',
+    tbl_tpl_free: '3 + свободный режим',
+    tbl_tpl_pro: '<strong>13+ шаблонов</strong>',
+    tbl_letters: 'Сохранённые письма',
+    tbl_contacts: 'Контакты',
+    tbl_profiles: 'Профили отправителя',
+    tbl_unlimited: '<strong>Без ограничений</strong>',
+    tbl_unlimited2: '<strong>Без ограничений</strong>',
+    tbl_unlimited3: '<strong>Без ограничений</strong>',
+    tbl_backup: 'Импорт/экспорт бэкапов',
+    tbl_logo: 'Логотип и подпись',
+    download_title: 'Скачать сейчас',
+    download_subtitle: 'Без аккаунта, без облака — ваши данные остаются на вашем компьютере.',
+    faq_title: 'Частые вопросы',
+    faq1_q: 'Что такое DIN 5008 и почему это важно?',
+    faq1_a: 'DIN 5008 — это немецкий стандарт оформления деловых писем. Он регулирует поля, положение адресного блока, линии сгиба и размеры шрифта — чтобы ваше письмо выглядело профессионально и помещалось в оконные конверты. Наш редактор выполняет форматирование автоматически.',
+    faq2_q: 'Можно ли использовать приложение бесплатно?',
+    faq2_a: 'Да! Бесплатная версия включает 3 шаблона (расторжение, напоминание, возражение), свободный режим, предпросмотр и все функции DIN 5008. Для экспорта в PDF и всех 13+ шаблонов нужна PRO-версия.',
+    faq3_q: 'Лицензия PRO — разовый платёж или подписка?',
+    faq3_a: 'Лицензия PRO — это <strong>разовый платёж 14,99 €</strong> — без подписки, без скрытых расходов. Вы получаете лицензионный ключ, действующий пожизненно на всех ваших устройствах.',
+    faq4_q: 'Передаются ли мои данные в облако?',
+    faq4_a: 'Нет. Все ваши данные (письма, профили, контакты) хранятся исключительно локально на вашем компьютере. Нет облачного подключения и не требуется учётная запись.',
+    faq5_q: 'На каких операционных системах работает приложение?',
+    faq5_a: 'Приложение работает на <strong>Windows</strong> (64-bit), <strong>macOS</strong> (Intel и Apple Silicon) и <strong>Linux</strong> (AppImage). Все файлы установки находятся в разделе «Скачать».',
+    footer_copy: '© 2026 DIN 5008 Brief Editor. Все права защищены.'
+},
+en: {
+    nav_features: 'Features',
+    nav_pricing: 'Pricing',
+    hero_title: 'DIN 5008 Business Letters —<br>simple, fast and standards-compliant',
+    hero_subtitle: 'Desktop app with 13+ templates for cancellations, reminders, applications and more.<br>Start for free — no account, no cloud.',
+    btn_download: '⬇ Download for free',
+    btn_buy_pro: '⭐ Buy PRO — €14.99',
+    btn_buy_pro_cart: '🛒 Buy PRO — €14.99',
+    hero_platforms: 'Available for <strong>Windows</strong>, <strong>macOS</strong> and <strong>Linux</strong>',
+    screenshots_title: 'See the app in action',
+    screenshots_subtitle: 'Professional layout per DIN 5008 — with live preview, templates and contact management.',
+    shot_editor: 'Letter editor with live preview',
+    shot_templates: '13+ letter templates',
+    shot_profiles: 'Profiles & Contacts',
+    features_title: 'Everything you need for business letters',
+    feat_din_title: 'DIN 5008 compliant',
+    feat_din_desc: 'Automatic compliance with all measurements — address field, fold marks, margins. Form A, Form B and C4 format.',
+    feat_tpl_title: '13+ Templates',
+    feat_tpl_desc: 'Cancellation, reminder, objection, application, complaint, GDPR request — legally correct and professional.',
+    feat_preview_title: 'Live Preview',
+    feat_preview_desc: 'See your letter in real time in A4 format — exactly as it will be printed or exported as PDF.',
+    feat_pdf_title: 'PDF Export',
+    feat_pdf_desc: 'Export your letter as a high-resolution PDF — ready to print or send via email.',
+    feat_profiles_title: 'Profiles & Contacts',
+    feat_profiles_desc: 'Multiple sender profiles with logo and signature. Contact management with CSV/JSON import.',
+    feat_lang_title: 'Trilingual & Dark Mode',
+    feat_lang_desc: 'Interface in German, English and Russian. Built-in dark mode for comfortable work.',
+    pricing_title: 'Start free, upgrade to PRO',
+    pricing_subtitle: 'The free version is fully usable — PRO unlocks all features.',
+    tbl_feature: 'Feature',
+    tbl_free: 'Free',
+    tbl_din: 'DIN 5008 formatting (A, B, C4)',
+    tbl_preview: 'Live preview in A4 format',
+    tbl_fold: 'Fold marks & window envelope',
+    tbl_trilingual: 'Trilingual (DE / EN / RU)',
+    tbl_templates: 'Letter templates',
+    tbl_tpl_free: '3 + free mode',
+    tbl_tpl_pro: '<strong>13+ templates</strong>',
+    tbl_letters: 'Saved letters',
+    tbl_contacts: 'Contacts',
+    tbl_profiles: 'Sender profiles',
+    tbl_unlimited: '<strong>Unlimited</strong>',
+    tbl_unlimited2: '<strong>Unlimited</strong>',
+    tbl_unlimited3: '<strong>Unlimited</strong>',
+    tbl_backup: 'Backup import/export',
+    tbl_logo: 'Logo & handwritten signature',
+    download_title: 'Download now',
+    download_subtitle: 'No account, no cloud — your data stays on your computer.',
+    faq_title: 'Frequently Asked Questions',
+    faq1_q: 'What is DIN 5008 and why does it matter?',
+    faq1_a: 'DIN 5008 is the German standard for business letters. It defines margins, address field position, fold marks and font sizes — so your letter looks professional and fits correctly in window envelopes. Our editor handles the formatting automatically.',
+    faq2_q: 'Can I use the app for free?',
+    faq2_a: 'Yes! The free version includes 3 templates (cancellation, reminder, objection), free letter mode, live preview and all DIN 5008 features. For PDF export and all 13+ templates you need the PRO version.',
+    faq3_q: 'Is the PRO license a one-time payment or a subscription?',
+    faq3_a: 'The PRO license is a <strong>one-time payment of €14.99</strong> — no subscription, no hidden costs. You receive a license key that is valid for life and works on all your devices.',
+    faq4_q: 'Is my data transmitted to the cloud?',
+    faq4_a: 'No. All your data (letters, profiles, contacts) is stored exclusively on your local computer. There is no cloud connection and no user account required.',
+    faq5_q: 'Which operating systems does the app support?',
+    faq5_a: 'The app runs on <strong>Windows</strong> (64-bit), <strong>macOS</strong> (Intel & Apple Silicon) and <strong>Linux</strong> (AppImage). All installation files can be found in the Download section.',
+    footer_copy: '© 2026 DIN 5008 Brief Editor. All rights reserved.'
+}
+};
+
+/* ── Language switcher ── */
+function setLang(lang) {
+    if (!LP_I18N[lang]) return;
+    document.documentElement.lang = lang === 'de' ? 'de' : lang === 'ru' ? 'ru' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (LP_I18N[lang][key] != null) el.innerHTML = LP_I18N[lang][key];
+    });
+    document.querySelectorAll('.lp-lang-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
+    localStorage.setItem('lp-lang', lang);
+}
+document.querySelectorAll('.lp-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+});
+(function() {
+    const saved = localStorage.getItem('lp-lang');
+    if (saved && LP_I18N[saved]) setLang(saved);
+})();
+
+/* ── Theme toggle ── */
+function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    localStorage.setItem('lp-theme', isDark ? 'light' : 'dark');
+    document.querySelector('.lp-theme-toggle').textContent = isDark ? '🌙' : '☀️';
+}
+(function() {
+    const saved = localStorage.getItem('lp-theme') ||
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', saved);
+    if (saved === 'dark') {
+        const btn = document.querySelector('.lp-theme-toggle');
+        if (btn) btn.textContent = '☀️';
+    }
+})();
+</script>
+
+</body>
+</html>

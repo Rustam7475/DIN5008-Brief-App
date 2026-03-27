@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geschäftsbrief DIN 5008 — Editor</title>
+<style>
+/* ===================================================
+   Geschäftsbrief DIN 5008 — Editor Styles
+   =================================================== */
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --clr-bg: #f0f2f5;
+    --clr-surface: #ffffff;
+    --clr-primary: #2563eb;
+    --clr-primary-hover: #1d4ed8;
+    --clr-secondary: #64748b;
+    --clr-text: #1e293b;
+    --clr-text-muted: #94a3b8;
+    --clr-border: #e2e8f0;
+    --clr-mark: #cbd5e1;
+    --clr-danger: #ef4444;
+    --radius: 8px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+    --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-serif: 'Times New Roman', 'Georgia', serif;
+    --a4-w: 210mm;
+    --a4-h: 297mm;
+}
+
+html { font-size: 16px; }
+
+body {
+    font-family: var(--font-sans);
+    background: var(--clr-bg);
+    color: var(--clr-text);
+    line-height: 1.5;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ---------- Toolbar ---------- */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    background: var(--clr-surface);
+    border-bottom: 1px solid var(--clr-border);
+    box-shadow: var(--shadow-sm);
+    z-index: 100;
+    position: relative;
+}
+
+.toolbar h1 { font-size: 1.1rem; font-weight: 700; color: var(--clr-text); white-space: nowrap; }
+
+.form-toggle {
+    display: flex; gap: 0;
+    border: 2px solid var(--clr-primary);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.toggle-btn {
+    border: none; background: transparent;
+    padding: 6px 20px; font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; color: var(--clr-primary); transition: all 0.2s;
+}
+
+.toggle-btn.active { background: var(--clr-primary); color: white; }
+.toggle-btn:hover:not(.active) { background: rgba(37, 99, 235, 0.08); }
+
+.toolbar-right { display: flex; gap: 12px; }
+
+.action-btn {
+    border: none; padding: 8px 20px; border-radius: var(--radius);
+    font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+
+.btn-primary { background: var(--clr-primary); color: white; }
+.btn-primary:hover { background: var(--clr-primary-hover); }
+.btn-secondary { background: var(--clr-border); color: var(--clr-secondary); }
+.btn-secondary:hover { background: #d1d5db; color: var(--clr-text); }
+
+/* ---------- Main Layout ---------- */
+.app-layout { display: flex; height: calc(100vh - 56px); }
+
+/* ---------- Input Panel (left) ---------- */
+.input-panel {
+    width: 380px; min-width: 340px;
+    overflow-y: auto; padding: 20px;
+    border-right: 1px solid var(--clr-border);
+    background: var(--clr-surface);
+}
+
+.form-section { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--clr-border); }
+.form-section:last-child { border-bottom: none; }
+
+.section-title {
+    font-size: 0.8rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--clr-primary); margin-bottom: 12px;
+}
+
+.form-group { margin-bottom: 10px; flex: 1; }
+
+.form-group label {
+    display: block; font-size: 0.75rem; font-weight: 600;
+    color: var(--clr-secondary); margin-bottom: 3px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%; padding: 8px 10px;
+    border: 1px solid var(--clr-border); border-radius: 6px;
+    font-size: 0.85rem; font-family: var(--font-sans);
+    color: var(--clr-text); background-color: var(--clr-surface);
+    transition: border-color 0.2s; resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none; border-color: var(--clr-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-row { display: flex; gap: 10px; }
+.form-group.small { flex: 0 0 90px; }
+
+/* Toggle row for checkboxes */
+.toggle-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; margin-bottom: 2px; }
+.toggle-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--clr-primary); cursor: pointer; flex-shrink: 0; }
+.toggle-label { font-size: 0.75rem !important; font-weight: 500 !important; color: var(--clr-secondary) !important; cursor: pointer; user-select: none; }
+
+/* Russian translation hints */
+.ru { font-weight: 400; font-size: 0.7rem; color: var(--clr-primary); opacity: 0.7; margin-left: 4px; }
+.section-title .ru { font-size: 0.65rem; text-transform: none; letter-spacing: normal; }
+.action-btn .ru { font-size: 0.65rem; font-weight: 400; opacity: 0.8; }
+
+/* Field hints */
+.hint {
+    display: block; font-size: 0.68rem; font-weight: 400;
+    color: #94a3b8; font-style: italic; margin-top: 1px; margin-bottom: 3px;
+    line-height: 1.35;
+}
+
+/* ---------- Preview Panel (right) ---------- */
+.preview-panel {
+    flex: 1; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; background: var(--clr-bg);
+}
+
+.preview-scroll { overflow: auto; max-height: 100%; max-width: 100%; padding: 30px; }
+
+/* ---------- A4 Page ---------- */
+.a4-page {
+    width: var(--a4-w); height: var(--a4-h);
+    background: white; box-shadow: var(--shadow-lg);
+    position: relative; font-family: var(--font-serif);
+    font-size: 11pt; line-height: 1.45; color: #000;
+    overflow: hidden; transform-origin: top center;
+}
+
+/* ---------- Fold Marks ---------- */
+.mark { position: absolute; left: 20mm; width: 5mm; height: 0; display: block; margin: 0; padding: 0; border: none; border-top: 0.5px solid #000; overflow: visible; }
+.a4-page.form-b .fold-mark-1 { top: 105mm; }
+.a4-page.form-b .fold-mark-2 { top: 210mm; }
+.a4-page.form-a .fold-mark-1 { top: 87mm; }
+.a4-page.form-a .fold-mark-2 { top: 192mm; }
+
+/* ---------- Letterhead ---------- */
+.letterhead {
+    position: absolute; top: 0; left: 0; width: 100%;
+    height: 27mm; display: flex; align-items: center;
+    justify-content: flex-end; padding: 8mm 20mm 0 25mm;
+}
+
+.a4-page.form-b .letterhead { height: 50mm; padding-top: 10mm; }
+
+.letterhead-name {
+    font-family: var(--font-sans); font-size: 16pt;
+    font-weight: 700; color: #1e293b; text-align: right;
+}
+
+/* ---------- Return Address ---------- */
+.return-address {
+    position: absolute; left: 20mm; width: 85mm; height: 5mm;
+    font-size: 6pt; line-height: 5mm; overflow: hidden;
+    color: #000; text-decoration: underline; white-space: nowrap; text-overflow: ellipsis;
+}
+
+.a4-page.form-a .return-address { top: 27mm; }
+.a4-page.form-b .return-address { top: 50mm; }
+
+/* ---------- Endorsement Zone ---------- */
+.endorsement-zone {
+    position: absolute; left: 20mm; width: 85mm; height: 12.7mm;
+    font-size: 8pt; line-height: 1.4; color: #555;
+    display: flex; align-items: flex-end;
+}
+
+.a4-page.form-a .endorsement-zone { top: 32mm; }
+.a4-page.form-b .endorsement-zone { top: 55mm; }
+
+/* ---------- Recipient Address ---------- */
+.recipient-address {
+    position: absolute; left: 20mm; width: 85mm; height: 27.3mm;
+    font-size: 11pt; line-height: 1.35; overflow: hidden;
+}
+
+.a4-page.form-a .recipient-address { top: 44.7mm; }
+.a4-page.form-b .recipient-address { top: 67.7mm; }
+
+/* ---------- Information Block ---------- */
+.info-block {
+    position: absolute; left: 125mm; width: 75mm;
+    font-size: 8.5pt; line-height: 1.5; font-family: var(--font-sans);
+}
+
+.a4-page.form-a .info-block { top: 32mm; }
+.a4-page.form-b .info-block { top: 55mm; }
+
+.info-block .info-row { margin-bottom: 0.8mm; display: flex; align-items: baseline; }
+.info-block .info-label { color: #000; font-size: 8.5pt; display: inline; margin-bottom: 0; min-width: 22mm; flex-shrink: 0; }
+.info-block .info-value { color: #000; font-weight: 400; font-size: 8.5pt; }
+
+/* ---------- Subject Line ---------- */
+.letter-subject { position: absolute; left: 25mm; right: 20mm; font-weight: 700; font-size: 11pt; }
+.a4-page.form-a .letter-subject { top: 108.4mm; }
+.a4-page.form-b .letter-subject { top: 108.4mm; }
+
+/* ---------- Letter Body ---------- */
+.letter-body {
+    position: absolute; left: 25mm; right: 20mm;
+    font-size: 11pt; line-height: 1.5;
+    white-space: pre-wrap; word-wrap: break-word; overflow: hidden;
+}
+
+.a4-page.form-a .letter-body { top: 116.4mm; }
+.a4-page.form-b .letter-body { top: 116.4mm; }
+
+.letter-body .body-salutation { margin-bottom: 2mm; }
+.letter-body .body-text { margin-bottom: 4mm; white-space: pre-wrap; }
+.letter-body .body-closing { margin-top: 4mm; margin-bottom: 2mm; }
+.letter-body .body-company { margin-bottom: 10mm; font-family: var(--font-sans); }
+.letter-body .body-signature-block { margin-bottom: 2mm; font-family: var(--font-sans); }
+.letter-body .body-enclosures { margin-top: 8mm; font-size: 10pt; white-space: pre-wrap; }
+.letter-body .body-enclosures-label { font-weight: 700; }
+
+/* ---------- Footer ---------- */
+.letter-footer {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 25mm;
+    border-top: 0.5px solid #ccc; display: flex;
+    padding: 2mm 20mm; gap: 3mm;
+    font-family: var(--font-sans); font-size: 6.5pt; line-height: 1.5; color: #555;
+}
+
+.letter-footer .footer-col { flex: 1; white-space: pre-wrap; overflow: hidden; }
+
+/* ---------- DIN Info Panel ---------- */
+.din-info { position: absolute; bottom: 16px; right: 16px; z-index: 10; }
+
+/* ---------- Zoom Controls ---------- */
+.zoom-bar {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 10;
+    display: flex; align-items: center; gap: 4px;
+    background: var(--clr-surface); border: 1px solid var(--clr-border);
+    border-radius: var(--radius); padding: 4px 8px;
+    box-shadow: var(--shadow-md); user-select: none;
+}
+.zoom-btn {
+    border: none; background: transparent; width: 30px; height: 30px;
+    font-size: 1.1rem; font-weight: 700; color: var(--clr-secondary);
+    cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+}
+.zoom-btn:hover { background: var(--clr-bg); color: var(--clr-text); }
+.zoom-btn.active { background: var(--clr-primary); color: white; }
+.zoom-level {
+    min-width: 48px; text-align: center; font-size: 0.78rem;
+    font-weight: 600; color: var(--clr-text); font-family: var(--font-sans);
+}
+.zoom-sep { width: 1px; height: 20px; background: var(--clr-border); margin: 0 4px; }
+
+.din-info-toggle {
+    background: var(--clr-surface); border: 1px solid var(--clr-border);
+    padding: 6px 14px; border-radius: var(--radius);
+    font-size: 0.8rem; font-weight: 600; color: var(--clr-secondary);
+    cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s;
+}
+
+.din-info-toggle:hover { background: var(--clr-bg); }
+
+.din-info-panel {
+    display: none; position: absolute; bottom: 40px; right: 0;
+    width: 320px; background: var(--clr-surface);
+    border: 1px solid var(--clr-border); border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); padding: 16px; font-size: 0.82rem;
+}
+
+.din-info-panel.visible { display: block; }
+.din-info-panel h3 { font-size: 0.9rem; margin-bottom: 10px; color: var(--clr-primary); }
+.din-info-panel table { width: 100%; border-collapse: collapse; }
+.din-info-panel td { padding: 3px 6px; border-bottom: 1px solid var(--clr-border); font-size: 0.78rem; }
+.din-info-panel td:first-child { font-weight: 600; color: var(--clr-secondary); width: 55%; }
+
+/* ---------- Print Styles ---------- */
+@media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    html, body {
+        width: 210mm; height: 297mm;
+        margin: 0; padding: 0;
+        background: white; overflow: hidden;
+    }
+    .toolbar, .input-panel, .din-info, .zoom-bar { display: none !important; }
+    .app-layout {
+        display: block; width: 210mm; height: 297mm;
+        margin: 0; padding: 0; overflow: hidden;
+    }
+    .preview-panel {
+        display: block; position: absolute;
+        top: 0; left: 0; width: 210mm; height: 297mm;
+        margin: 0; padding: 0; overflow: hidden; background: white;
+    }
+    .preview-scroll {
+        display: block; position: absolute;
+        top: 0; left: 0; width: 210mm; height: 297mm;
+        margin: 0; padding: 0; overflow: hidden;
+    }
+    .a4-page {
+        position: absolute; top: 0; left: 0;
+        width: 210mm; height: 297mm;
+        margin: 0; padding: 0;
+        box-shadow: none; transform: none !important; transform-origin: top left !important;
+        overflow: hidden;
+    }
+    .mark { display: block !important; visibility: visible !important; left: 20mm !important; width: 5mm !important; margin: 0 !important; padding: 0 !important; border: none !important; border-top: 0.5px solid #000 !important; }
+    @page { size: A4; margin: 0; }
+}
+
+/* ---------- Scrollbar ---------- */
+.input-panel::-webkit-scrollbar, .preview-scroll::-webkit-scrollbar { width: 8px; }
+.input-panel::-webkit-scrollbar-track, .preview-scroll::-webkit-scrollbar-track { background: transparent; }
+.input-panel::-webkit-scrollbar-thumb, .preview-scroll::-webkit-scrollbar-thumb { background: var(--clr-border); border-radius: 4px; }
+.input-panel::-webkit-scrollbar-thumb:hover, .preview-scroll::-webkit-scrollbar-thumb:hover { background: var(--clr-mark); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+    .app-layout { flex-direction: column; }
+    .input-panel { width: 100%; min-width: unset; max-height: 45vh; border-right: none; border-bottom: 1px solid var(--clr-border); }
+    .preview-panel { flex: 1; }
+    .a4-page { transform: scale(0.55); transform-origin: top center; }
+}
+
+/* ---------- Modal Dialogs ---------- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.15s ease; }
+.modal-overlay[hidden] { display: none; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--clr-surface); border-radius: 12px; box-shadow: var(--shadow-lg); width: 420px; max-width: 90vw; max-height: 80vh; display: flex; flex-direction: column; animation: slideUp 0.2s ease; }
+.modal-wide { width: 560px; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--clr-border); }
+.modal-header h2 { font-size: 1rem; font-weight: 700; }
+.modal-close { background: none; border: none; font-size: 1.4rem; color: var(--clr-secondary); cursor: pointer; padding: 4px 8px; border-radius: 6px; line-height: 1; }
+.modal-close:hover { background: var(--clr-border); color: var(--clr-text); }
+.modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 12px 20px; border-top: 1px solid var(--clr-border); }
+.letters-list { display: flex; flex-direction: column; gap: 8px; }
+.letters-empty { text-align: center; color: var(--clr-text-muted); padding: 32px 0; font-size: 0.9rem; }
+.letter-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--clr-border); border-radius: var(--radius); transition: all 0.15s; cursor: pointer; }
+.letter-card:hover { border-color: var(--clr-primary); background: rgba(37,99,235,0.04); }
+.letter-card-info { flex: 1; min-width: 0; }
+.letter-card-name { font-weight: 600; font-size: 0.9rem; color: var(--clr-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.letter-card-meta { font-size: 0.72rem; color: var(--clr-text-muted); margin-top: 2px; }
+.letter-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.letter-card-btn { background: none; border: 1px solid var(--clr-border); border-radius: 6px; padding: 5px 10px; font-size: 0.75rem; cursor: pointer; color: var(--clr-secondary); transition: all 0.15s; }
+.letter-card-btn:hover { border-color: var(--clr-primary); color: var(--clr-primary); }
+.letter-card-btn.btn-delete:hover { border-color: var(--clr-danger); color: var(--clr-danger); background: rgba(239,68,68,0.06); }
+.pdf-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+.pdf-progress { background: var(--clr-surface); padding: 32px 48px; border-radius: 12px; box-shadow: var(--shadow-lg); text-align: center; font-size: 0.95rem; font-weight: 600; }
+.pdf-progress .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--clr-border); border-top-color: var(--clr-primary); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media print { .modal-overlay, .pdf-overlay { display: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ================= TOOLBAR ================= -->
+<header class="toolbar">
+    <div class="toolbar-left">
+        <h1>Geschäftsbrief DIN 5008</h1>
+    </div>
+    <div class="toolbar-center">
+        <div class="form-toggle">
+            <button id="btn-form-a" class="toggle-btn" data-form="A">Form A</button>
+            <button id="btn-form-b" class="toggle-btn active" data-form="B">Form B</button>
+        </div>
+    </div>
+    <div class="toolbar-right">
+        <button id="btn-letters" class="action-btn btn-secondary">📂 Meine Briefe <span class="ru" data-en="My letters">Мои письма</span></button>
+        <button id="btn-save-as" class="action-btn btn-secondary">💾 Speichern <span class="ru" data-en="Save">Сохранить</span></button>
+        <button id="btn-clear" class="action-btn btn-secondary">Zurücksetzen <span class="ru" data-en="Reset">Сброс</span></button>
+        <button class="btn-icon btn-hint-lang" title="Подсказки: Русский → English" style="font-size:1.1rem;padding:4px 8px;border:1px solid var(--clr-border);border-radius:6px;background:var(--clr-surface);cursor:pointer">🇷🇺</button>
+        <button id="btn-pdf" class="action-btn btn-primary">PDF ↓</button>
+        <button id="btn-print" class="action-btn btn-secondary">🖨 Drucken <span class="ru" data-en="Print">Печать</span></button>
+    </div>
+</header>
+
+<!-- ================= MAIN LAYOUT ================= -->
+<main class="app-layout">
+
+    <!-- LEFT: Input Form -->
+    <aside class="input-panel">
+
+        <section class="form-section">
+            <h2 class="section-title">Absender <span class="ru" data-en="Sender">Отправитель</span></h2>
+            <span class="hint" data-hint-ru="Ваши данные — тот, кто отправляет письмо" data-hint-en="Your details — the person/company sending the letter" data-hint-de="Ihre Absenderdaten — wer den Brief versendet">Ваши данные — тот, кто отправляет письмо</span>
+            <div class="form-group">
+                <label for="sender-name">Name / Firma <span class="ru" data-en="Name / Company">Имя / Фирма</span></label>
+                <div class="toggle-row">
+                    <input type="checkbox" id="show-letterhead" checked>
+                    <label for="show-letterhead" class="toggle-label">Im Briefkopf anzeigen <span class="ru" data-en="Show in letterhead">Показать в шапке</span></label>
+                </div>
+                <input type="text" id="sender-name" placeholder="Max Mustermann GmbH">
+            </div>
+            <div class="form-group">
+                <label for="sender-street">Straße, Nr. <span class="ru" data-en="Street, No.">Улица, №</span></label>
+                <input type="text" id="sender-street" placeholder="Musterstraße 1">
+            </div>
+            <div class="form-row">
+                <div class="form-group small">
+                    <label for="sender-zip">PLZ <span class="ru" data-en="Zip code">Индекс</span></label>
+                    <input type="text" id="sender-zip" placeholder="12345">
+                </div>
+                <div class="form-group">
+                    <label for="sender-city">Ort <span class="ru" data-en="City">Город</span></label>
+                    <input type="text" id="sender-city" placeholder="Musterstadt">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="sender-phone">Telefon <span class="ru" data-en="Phone">Телефон</span></label>
+                <input type="text" id="sender-phone" placeholder="+49 123 456789">
+            </div>
+            <div class="form-group">
+                <label for="sender-email">E-Mail</label>
+                <input type="email" id="sender-email" placeholder="info@mustermann.de">
+            </div>
+            <div class="form-group">
+                <label for="sender-web">Website <span class="ru" data-en="Website">Сайт</span></label>
+                <input type="text" id="sender-web" placeholder="www.mustermann.de">
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2 class="section-title">Empfänger <span class="ru" data-en="Recipient">Получатель</span></h2>
+            <span class="hint" data-hint-ru="Кому адресовано письмо" data-hint-en="Who the letter is addressed to" data-hint-de="An wen der Brief adressiert ist">Кому адресовано письмо</span>
+            <div class="form-group">
+                <label for="recipient-zusatz">Zusatz (optional) <span class="ru" data-en="Note (optional)">Примечание (необяз.)</span></label>
+                <span class="hint" data-hint-ru="Напр. «Einschreiben» (заказное), «Persönlich» (лично). Можно оставить пустым" data-hint-en="E.g. 'Einschreiben' (registered), 'Persönlich' (personal). Can be left empty" data-hint-de="Z.B. Einschreiben, Persönlich. Kann leer bleiben">Напр. «Einschreiben» (заказное), «Persönlich» (лично). Можно оставить пустым</span>
+                <input type="text" id="recipient-zusatz" placeholder="z. B. Einschreiben, Persönlich">
+            </div>
+            <div class="form-group">
+                <label for="recipient-company">Firma / Organisation <span class="ru" data-en="Company / Organisation">Фирма / Организация</span></label>
+                <input type="text" id="recipient-company" placeholder="Beispiel AG">
+            </div>
+            <div class="form-group">
+                <label for="recipient-anrede">Anrede <span class="ru" data-en="Address salutation">Форма обращения в адресе</span></label>
+                <span class="hint" data-hint-ru="Как обращаться на конверте: Herrn = Господину, Frau = Госпоже" data-hint-en="Salutation on envelope: Herrn = Mr., Frau = Mrs." data-hint-de="Anrede auf dem Umschlag: Herrn oder Frau">Как обращаться на конверте: Herrn = Господину, Frau = Госпоже</span>
+                <input type="text" id="recipient-anrede" placeholder="Herrn / Frau">
+            </div>
+            <div class="form-group">
+                <label for="recipient-name">Name <span class="ru" data-en="Name">Имя</span></label>
+                <input type="text" id="recipient-name" placeholder="Dr. Erika Musterfrau">
+            </div>
+            <div class="form-group">
+                <label for="recipient-street">Straße, Nr. <span class="ru" data-en="Street, No.">Улица, №</span></label>
+                <input type="text" id="recipient-street" placeholder="Beispielweg 42">
+            </div>
+            <div class="form-row">
+                <div class="form-group small">
+                    <label for="recipient-zip">PLZ <span class="ru" data-en="Zip code">Индекс</span></label>
+                    <input type="text" id="recipient-zip" placeholder="54321">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-city">Ort <span class="ru" data-en="City">Город</span></label>
+                    <input type="text" id="recipient-city" placeholder="Beispielstadt">
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2 class="section-title">Informationsblock <span class="ru" data-en="Info block">Информационный блок</span></h2>
+            <span class="hint" data-hint-ru="Служебные данные переписки, размещаются справа на листе. Пустые поля не отображаются" data-hint-en="Reference data, placed on the right side. Empty fields are hidden" data-hint-de="Geschäftsdaten rechts auf dem Blatt. Leere Felder werden ausgeblendet">Служебные данные переписки, размещаются справа на листе. Пустые поля не отображаются</span>
+            <div class="form-group">
+                <label for="info-date">Datum <span class="ru" data-en="Date">Дата</span></label>
+                <span class="hint" data-hint-ru="Дата написания письма" data-hint-en="Date of the letter" data-hint-de="Datum des Briefes">Дата написания письма</span>
+                <input type="text" id="info-date" placeholder="14. März 2026">
+            </div>
+            <div class="form-group">
+                <label for="info-ihr-zeichen">Ihr Zeichen <span class="ru" data-en="Your ref.">Ваш номер</span></label>
+                <span class="hint" data-hint-ru="Регистрационный номер из письма, на которое вы отвечаете (номер дела получателя)" data-hint-en="Reference number from the letter you are replying to (recipient's case number)" data-hint-de="Aktenzeichen aus dem Schreiben, auf das Sie antworten">Регистрационный номер из письма, на которое вы отвечаете (номер дела получателя)</span>
+                <input type="text" id="info-ihr-zeichen" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-ihr-schreiben">Ihr Schreiben vom <span class="ru" data-en="Your letter of">Ваше письмо от</span></label>
+                <span class="hint" data-hint-ru="Дата письма, на которое вы отвечаете" data-hint-en="Date of the letter you are replying to" data-hint-de="Datum des Schreibens, auf das Sie antworten">Дата письма, на которое вы отвечаете</span>
+                <input type="text" id="info-ihr-schreiben" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-unser-zeichen">Unser Zeichen <span class="ru" data-en="Our ref.">Наш номер</span></label>
+                <span class="hint" data-hint-ru="Ваш внутренний номер дела, напр. инициалы отдела/сотрудника" data-hint-en="Your internal reference number, e.g. department/employee initials" data-hint-de="Ihr internes Aktenzeichen, z.B. Abteilungs-/Mitarbeiterkürzel">Ваш внутренний номер дела, напр. инициалы отдела/сотрудника</span>
+                <input type="text" id="info-unser-zeichen" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-ansprechpartner">Ihr Gesprächspartner <span class="ru" data-en="Your contact">Ваш собеседник</span></label>
+                <span class="hint" data-hint-ru="Имя сотрудника, к которому обращаться по этому вопросу" data-hint-en="Name of the contact person for this matter" data-hint-de="Name des Ansprechpartners für diese Angelegenheit">Имя сотрудника, к которому обращаться по этому вопросу</span>
+                <input type="text" id="info-ansprechpartner" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-abteilung">Abteilung <span class="ru" data-en="Department">Отдел</span></label>
+                <span class="hint" data-hint-ru="Название отдела контактного лица" data-hint-en="Department of the contact person" data-hint-de="Abteilung des Ansprechpartners">Название отдела контактного лица</span>
+                <input type="text" id="info-abteilung" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-durchwahl">Telefon / Durchwahl <span class="ru" data-en="Phone / Direct">Телефон / Прямой номер</span></label>
+                <span class="hint" data-hint-ru="Прямой телефон контактного лица" data-hint-en="Direct phone number of the contact person" data-hint-de="Durchwahl des Ansprechpartners">Прямой телефон контактного лица</span>
+                <input type="text" id="info-durchwahl" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-telefax">Telefax <span class="ru" data-en="Fax">Факс</span></label>
+                <span class="hint" data-hint-ru="Номер факса (если есть)" data-hint-en="Fax number (if applicable)" data-hint-de="Faxnummer (falls vorhanden)">Номер факса (если есть)</span>
+                <input type="text" id="info-telefax" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="info-bg-nummer">BG-Nummer <span class="ru" data-en="BG number">Номер BG</span></label>
+                <span class="hint" data-hint-ru="Номер Berufsgenossenschaft (если требуется)" data-hint-en="Berufsgenossenschaft number (if required)" data-hint-de="BG-Nummer (falls erforderlich)">Номер Berufsgenossenschaft (если требуется)</span>
+                <input type="text" id="info-bg-nummer" placeholder="">
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2 class="section-title">Briefinhalt <span class="ru" data-en="Letter content">Содержание письма</span></h2>
+            <span class="hint" data-hint-ru="Основной текст вашего письма" data-hint-en="Main text of your letter" data-hint-de="Haupttext Ihres Briefes">Основной текст вашего письма</span>
+
+            <div class="form-group">
+                <label for="letter-template-select">Briefvorlage <span class="ru" data-en="Letter template">Шаблон письма</span></label>
+                <span class="hint" data-hint-ru="Выберите тип письма — поля заполнятся автоматически. Можно редактировать" data-hint-en="Choose letter type — fields will be filled automatically. You can edit them" data-hint-de="Wählen Sie den Brieftyp — Felder werden automatisch ausgefüllt. Sie können sie bearbeiten">Выберите тип письма — поля заполнятся автоматически. Можно редактировать</span>
+                <select id="letter-template-select">
+                    <option value="">— Vorlage wählen / Выбрать шаблон —</option>
+                    <option value="kuendigung">Kündigung (Расторжение договора)</option>
+                    <option value="mahnung">Mahnung (Напоминание об оплате)</option>
+                    <option value="widerspruch">Widerspruch (Возражение)</option>
+                    <option value="bewerbung">Bewerbung (Заявление о приёме на работу)</option>
+                    <option value="reklamation">Reklamation (Рекламация)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="letter-subject">Betreff <span class="ru" data-en="Subject">Тема</span></label>
+                <span class="hint" data-hint-ru="Кратко о чём письмо. Выделяется жирным шрифтом" data-hint-en="Brief subject of the letter. Displayed in bold" data-hint-de="Kurze Betreffzeile. Wird fett dargestellt">Кратко о чём письмо. Выделяется жирным шрифтом</span>
+                <input type="text" id="letter-subject" placeholder="Ihr Anliegen vom …">
+            </div>
+            <div class="form-group">
+                <label for="letter-salutation">Anrede im Brief <span class="ru" data-en="Salutation">Приветствие в письме</span></label>
+                <span class="hint" data-hint-ru="Выберите вариант или введите свой текст" data-hint-en="Choose an option or enter your own text" data-hint-de="Wählen Sie eine Option oder geben Sie eigenen Text ein">Выберите вариант или введите свой текст</span>
+                <select id="letter-salutation-select">
+                    <option value="">— Выбрать шаблон / Vorlage wählen —</option>
+                    <option value="Sehr geehrte Damen und Herren,">Sehr geehrte Damen und Herren, (Уважаемые дамы и господа)</option>
+                    <option value="Sehr geehrte Frau ">Sehr geehrte Frau ... (Уважаемая госпожа...)</option>
+                    <option value="Sehr geehrter Herr ">Sehr geehrter Herr ... (Уважаемый господин...)</option>
+                    <option value="Liebe Frau ">Liebe Frau ... (Дорогая госпожа...)</option>
+                    <option value="Lieber Herr ">Lieber Herr ... (Дорогой господин...)</option>
+                    <option value="Guten Tag,">Guten Tag, (Добрый день)</option>
+                </select>
+                <input type="text" id="letter-salutation" placeholder="Sehr geehrte Frau Dr. Musterfrau,">
+            </div>
+            <div class="form-group">
+                <label for="letter-body">Brieftext <span class="ru" data-en="Letter text">Текст письма</span></label>
+                <textarea id="letter-body" rows="10" placeholder="hiermit bestätigen wir Ihnen …"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="letter-closing">Grußformel <span class="ru" data-en="Closing formula">Формула прощания</span></label>
+                <span class="hint" data-hint-ru="Выберите вариант или введите свой текст" data-hint-en="Choose an option or enter your own text" data-hint-de="Wählen Sie eine Option oder geben Sie eigenen Text ein">Выберите вариант или введите свой текст</span>
+                <select id="letter-closing-select">
+                    <option value="">— Выбрать шаблон / Vorlage wählen —</option>
+                    <option value="Mit freundlichen Grüßen">Mit freundlichen Grüßen (С уважением)</option>
+                    <option value="Mit freundlichem Gruß">Mit freundlichem Gruß (С уважением)</option>
+                    <option value="Freundliche Grüße">Freundliche Grüße (Дружеский привет)</option>
+                    <option value="Beste Grüße">Beste Grüße (Наилучшие пожелания)</option>
+                    <option value="Viele Grüße">Viele Grüße (Много приветов)</option>
+                    <option value="Herzliche Grüße">Herzliche Grüße (Сердечный привет)</option>
+                    <option value="Mit besten Grüßen">Mit besten Grüßen (С наилучшими)</option>
+                    <option value="Hochachtungsvoll">Hochachtungsvoll (С глубоким уважением)</option>
+                </select>
+                <input type="text" id="letter-closing" placeholder="Mit freundlichen Grüßen">
+            </div>
+            <div class="form-group">
+                <label for="letter-company">Firmenname unter Grußformel <span class="ru" data-en="Company name below closing">Название фирмы под прощанием</span></label>
+                <span class="hint" data-hint-ru="Название фирмы, ставится между прощанием и подписью (необяз.)" data-hint-en="Company name, placed between closing and signature (optional)" data-hint-de="Firmenname zwischen Grußformel und Unterschrift (optional)">Название фирмы, ставится между прощанием и подписью (необяз.)</span>
+                <input type="text" id="letter-company" placeholder="Max Mustermann GmbH">
+            </div>
+            <div class="form-group">
+                <label for="letter-zusatz">Zusatz (i.A. / i.V. / ppa.) <span class="ru" data-en="Authority">Полномочие</span></label>
+                <span class="hint" data-hint-ru="i.A. = im Auftrag (по поручению), i.V. = in Vertretung (по доверенности)" data-hint-en="i.A. = im Auftrag (on behalf), i.V. = in Vertretung (by proxy)" data-hint-de="i.A. = im Auftrag, i.V. = in Vertretung, ppa. = per Prokura">i.A. = im Auftrag (по поручению), i.V. = in Vertretung (по доверенности)</span>
+                <input type="text" id="letter-zusatz" placeholder="i.A.">
+            </div>
+            <div class="form-group">
+                <label for="letter-signature">Unterschrift (Name) <span class="ru" data-en="Signature (Name)">Подпись (Имя)</span></label>
+                <input type="text" id="letter-signature" placeholder="Max Mustermann">
+            </div>
+            <div class="form-group">
+                <label for="letter-enclosures">Anlagen <span class="ru" data-en="Enclosures">Приложения</span></label>
+                <span class="hint" data-hint-ru="Прилагаемые документы, каждый с новой строки" data-hint-en="Enclosed documents, one per line" data-hint-de="Beigefügte Dokumente, je eins pro Zeile">Прилагаемые документы, каждый с новой строки</span>
+                <textarea id="letter-enclosures" rows="3" placeholder="Anlage 1&#10;Anlage 2"></textarea>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2 class="section-title">Fußzeile <span class="ru" data-en="Footer">Нижний колонтитул</span></h2>
+            <span class="hint" data-hint-ru="4 столбца внизу страницы: реквизиты фирмы, банк, руководство и т.д." data-hint-en="4 columns at the bottom: company details, bank info, management, etc." data-hint-de="4 Spalten am Seitenende: Firmendaten, Bankverbindung, Geschäftsführung usw.">4 столбца внизу страницы: реквизиты фирмы, банк, руководство и т.д.</span>
+            <div class="form-group">
+                <label for="footer-col1">Spalte 1 <span class="ru" data-en="Column 1">Столбец 1</span></label>
+                <textarea id="footer-col1" rows="3" placeholder="Max Mustermann GmbH&#10;Musterstraße 1&#10;12345 Musterstadt"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="footer-col2">Spalte 2 <span class="ru" data-en="Column 2">Столбец 2</span></label>
+                <textarea id="footer-col2" rows="3" placeholder="Telefon: +49 123 456789&#10;E-Mail: info@mustermann.de&#10;Web: www.mustermann.de"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="footer-col3">Spalte 3 <span class="ru" data-en="Column 3">Столбец 3</span></label>
+                <textarea id="footer-col3" rows="3" placeholder="Sparkasse Musterstadt&#10;IBAN: DE12 3456 7890&#10;BIC: ABCDEFGH"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="footer-col4">Spalte 4 <span class="ru" data-en="Column 4">Столбец 4</span></label>
+                <textarea id="footer-col4" rows="3" placeholder="Geschäftsführer: M. Mustermann&#10;HRB 12345&#10;USt-IdNr.: DE123456789"></textarea>
+            </div>
+        </section>
+
+    </aside>
+
+    <!-- RIGHT: A4 Preview -->
+    <div class="preview-panel">
+        <div class="preview-scroll">
+            <div id="a4-page" class="a4-page form-b">
+                <hr class="mark fold-mark-1">
+                <hr class="mark fold-mark-2">
+                <div class="letterhead" id="preview-letterhead">
+                    <span class="letterhead-name" id="p-letterhead-name"></span>
+                </div>
+                <div class="return-address" id="p-return-address"></div>
+                <div class="endorsement-zone" id="p-endorsement"></div>
+                <div class="recipient-address" id="p-recipient"></div>
+                <div class="info-block" id="p-info-block"></div>
+                <div class="letter-subject" id="p-subject"></div>
+                <div class="letter-body" id="p-body"></div>
+                <div class="letter-footer" id="p-footer"></div>
+            </div>
+        </div>
+        <div class="zoom-bar" id="zoom-bar">
+            <button class="zoom-btn" id="zoom-out" title="Уменьшить">−</button>
+            <span class="zoom-level" id="zoom-level">100%</span>
+            <button class="zoom-btn" id="zoom-in" title="Увеличить">+</button>
+            <div class="zoom-sep"></div>
+            <button class="zoom-btn" id="zoom-fit" title="Весь лист / Ganze Seite">⤢</button>
+        </div>
+        <div class="din-info">
+            <div class="din-info-toggle" id="din-info-toggle">ℹ DIN 5008 Maße</div>
+            <div class="din-info-panel" id="din-info-panel">
+                <h3>DIN 5008 — Maße</h3>
+                <table>
+                    <tr><td>Blattgröße</td><td>210 × 297 mm</td></tr>
+                    <tr><td>Linker Rand</td><td>25 mm</td></tr>
+                    <tr><td>Rechter Rand</td><td>≥ 20 mm</td></tr>
+                    <tr class="form-a-info"><td>Anschriftfeld (A)</td><td>20 mm links, 27 mm oben</td></tr>
+                    <tr class="form-b-info"><td>Anschriftfeld (B)</td><td>20 mm links, 45 mm oben</td></tr>
+                    <tr><td>Anschriftfeld Größe</td><td>85 × 45 mm</td></tr>
+                    <tr><td>Informationsblock</td><td>ab 125 mm links</td></tr>
+                    <tr class="form-a-info"><td>Falzmarke 1 (A)</td><td>87 mm</td></tr>
+                    <tr class="form-a-info"><td>Falzmarke 2 (A)</td><td>192 mm</td></tr>
+                    <tr class="form-b-info"><td>Falzmarke 1 (B)</td><td>105 mm</td></tr>
+                    <tr class="form-b-info"><td>Falzmarke 2 (B)</td><td>210 mm</td></tr>
+                    <tr><td>Lochmarke</td><td>148,5 mm</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- Modal: Save Letter -->
+<div class="modal-overlay" id="modal-save" hidden>
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Brief speichern <span class="ru" data-en="Save letter">Сохранить письмо</span></h2>
+            <button class="modal-close" data-close="modal-save">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="save-name">Name des Briefes <span class="ru" data-en="Letter name">Название письма</span></label>
+                <input type="text" id="save-name" placeholder="z.B. Kündigung Vertrag, Mahnung Rechnung...">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="action-btn btn-secondary" data-close="modal-save">Abbrechen <span class="ru" data-en="Cancel">Отмена</span></button>
+            <button class="action-btn btn-primary" id="btn-save-confirm">Speichern <span class="ru" data-en="Save">Сохранить</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Letters List -->
+<div class="modal-overlay" id="modal-letters" hidden>
+    <div class="modal modal-wide">
+        <div class="modal-header">
+            <h2>📂 Meine Briefe <span class="ru" data-en="My letters">Мои письма</span></h2>
+            <button class="modal-close" data-close="modal-letters">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="letters-list" class="letters-list">
+                <p class="letters-empty">Keine gespeicherten Briefe <span class="ru" data-en="No saved letters">Нет сохранённых писем</span></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="action-btn btn-secondary" data-close="modal-letters">Schließen <span class="ru" data-en="Close">Закрыть</span></button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ===================================================
+   Geschäftsbrief DIN 5008 — Editor Script
+   =================================================== */
+
+/* ---------- Hint Language (RU / EN) ---------- */
+var HintLangManager = {
+    KEY: 'din5008_hint_lang',
+    get: function() { return localStorage.getItem(this.KEY) || 'ru'; },
+    set: function(lang) { localStorage.setItem(this.KEY, lang); this.apply(); },
+    toggle: function() {
+        var cur = this.get();
+        this.set(cur === 'ru' ? 'en' : cur === 'en' ? 'de' : 'ru');
+    },
+    apply: function() {
+        var lang = this.get();
+        // Hints
+        document.querySelectorAll('[data-hint-ru][data-hint-en]').forEach(function(el) {
+            if (lang === 'de') {
+                el.textContent = el.dataset.hintDe || el.dataset.hintEn;
+            } else {
+                el.textContent = lang === 'ru' ? el.dataset.hintRu : el.dataset.hintEn;
+            }
+        });
+        // Russian labels with data-en
+        document.querySelectorAll('.ru[data-en]').forEach(function(el) {
+            if (!el._origRu) el._origRu = el.textContent;
+            if (lang === 'de') {
+                el.style.display = 'none';
+            } else {
+                el.style.display = '';
+                el.textContent = lang === 'ru' ? el._origRu : el.dataset.en;
+            }
+        });
+        // Russian labels without data-en — just hide/show
+        document.querySelectorAll('.ru:not([data-en])').forEach(function(el) {
+            el.style.display = lang === 'de' ? 'none' : '';
+        });
+        // Template fields hint
+        document.querySelectorAll('.tpl-fields-hint').forEach(function(el) {
+            if (lang === 'de') {
+                el.innerHTML = 'Füllen Sie die Felder aus — der Brieftext wird automatisch aktualisiert';
+            } else if (lang === 'en') {
+                el.innerHTML = 'Fill in the fields below — the letter text will update automatically<br><span class="de">Füllen Sie die Felder aus — der Brieftext wird automatisch aktualisiert</span>';
+            } else {
+                el.innerHTML = 'Заполните поля ниже — текст письма обновится автоматически<br><span class="de">Füllen Sie die Felder aus — der Brieftext wird automatisch aktualisiert</span>';
+            }
+        });
+        // Toggle button
+        var flags = { ru: '🇷🇺', en: '🇬🇧', de: '🇩🇪' };
+        var titles = { ru: 'Подсказки: Русский → English', en: 'Hints: English → Deutsch', de: 'Hinweise: Deutsch → Русский' };
+        document.querySelectorAll('.btn-hint-lang').forEach(function(btn) {
+            btn.textContent = flags[lang] || '🇷🇺';
+            btn.title = titles[lang] || '';
+        });
+    },
+    init: function() {
+        var self = this;
+        document.querySelectorAll('.btn-hint-lang').forEach(function(btn) {
+            btn.addEventListener('click', function() { self.toggle(); });
+        });
+        this.apply();
+    }
+};
+HintLangManager.init();
+
+(function () {
+    'use strict';
+
+    const page = document.getElementById('a4-page');
+    const btnFormA = document.getElementById('btn-form-a');
+    const btnFormB = document.getElementById('btn-form-b');
+    const btnPrint = document.getElementById('btn-print');
+    const btnClear = document.getElementById('btn-clear');
+    const btnPdf = document.getElementById('btn-pdf');
+    const btnSaveAs = document.getElementById('btn-save-as');
+    const btnLetters = document.getElementById('btn-letters');
+    const dinToggle = document.getElementById('din-info-toggle');
+    const dinPanel = document.getElementById('din-info-panel');
+
+    const fields = {
+        senderName:     document.getElementById('sender-name'),
+        senderStreet:   document.getElementById('sender-street'),
+        senderZip:      document.getElementById('sender-zip'),
+        senderCity:     document.getElementById('sender-city'),
+        senderPhone:    document.getElementById('sender-phone'),
+        senderEmail:    document.getElementById('sender-email'),
+        senderWeb:      document.getElementById('sender-web'),
+        showLetterhead: document.getElementById('show-letterhead'),
+
+        recipientZusatz:  document.getElementById('recipient-zusatz'),
+        recipientCompany: document.getElementById('recipient-company'),
+        recipientAnrede:  document.getElementById('recipient-anrede'),
+        recipientName:    document.getElementById('recipient-name'),
+        recipientStreet:  document.getElementById('recipient-street'),
+        recipientZip:     document.getElementById('recipient-zip'),
+        recipientCity:    document.getElementById('recipient-city'),
+
+        infoDate:           document.getElementById('info-date'),
+        infoIhrZeichen:     document.getElementById('info-ihr-zeichen'),
+        infoIhrSchreiben:   document.getElementById('info-ihr-schreiben'),
+        infoUnserZeichen:   document.getElementById('info-unser-zeichen'),
+        infoAnsprechpartner:document.getElementById('info-ansprechpartner'),
+        infoAbteilung:      document.getElementById('info-abteilung'),
+        infoDurchwahl:      document.getElementById('info-durchwahl'),
+        infoTelefax:        document.getElementById('info-telefax'),
+        infoBgNummer:       document.getElementById('info-bg-nummer'),
+
+        letterSubject:    document.getElementById('letter-subject'),
+        letterSalutation: document.getElementById('letter-salutation'),
+        letterBody:       document.getElementById('letter-body'),
+        letterClosing:    document.getElementById('letter-closing'),
+        letterCompany:    document.getElementById('letter-company'),
+        letterZusatz:     document.getElementById('letter-zusatz'),
+        letterSignature:  document.getElementById('letter-signature'),
+        letterEnclosures: document.getElementById('letter-enclosures'),
+
+        footerCol1: document.getElementById('footer-col1'),
+        footerCol2: document.getElementById('footer-col2'),
+        footerCol3: document.getElementById('footer-col3'),
+        footerCol4: document.getElementById('footer-col4'),
+    };
+
+    const preview = {
+        letterheadName: document.getElementById('p-letterhead-name'),
+        returnAddress:  document.getElementById('p-return-address'),
+        endorsement:    document.getElementById('p-endorsement'),
+        recipient:      document.getElementById('p-recipient'),
+        infoBlock:      document.getElementById('p-info-block'),
+        subject:        document.getElementById('p-subject'),
+        body:           document.getElementById('p-body'),
+        footer:         document.getElementById('p-footer'),
+    };
+
+    let currentForm = 'B';
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function textToHtmlLines(text) {
+        return text.split('\n').map(line => escapeHtml(line)).join('<br>');
+    }
+
+    function updatePreview() {
+        preview.letterheadName.textContent = fields.senderName.value;
+        preview.letterheadName.style.display = fields.showLetterhead.checked ? '' : 'none';
+
+        const parts = [];
+        if (fields.senderName.value) parts.push(fields.senderName.value);
+        if (fields.senderStreet.value) parts.push(fields.senderStreet.value);
+        const zipCity = [fields.senderZip.value, fields.senderCity.value].filter(Boolean).join(' ');
+        if (zipCity) parts.push(zipCity);
+        preview.returnAddress.textContent = parts.join(' \u00b7 ');
+
+        preview.endorsement.textContent = fields.recipientZusatz.value;
+
+        const recipientLines = [];
+        if (fields.recipientCompany.value) recipientLines.push(escapeHtml(fields.recipientCompany.value));
+        if (fields.recipientAnrede.value || fields.recipientName.value) {
+            const anredeName = [fields.recipientAnrede.value, fields.recipientName.value].filter(Boolean).join(' ');
+            recipientLines.push(escapeHtml(anredeName));
+        }
+        if (fields.recipientStreet.value) recipientLines.push(escapeHtml(fields.recipientStreet.value));
+        const rZipCity = [fields.recipientZip.value, fields.recipientCity.value].filter(Boolean).join(' ');
+        if (rZipCity) recipientLines.push(escapeHtml(rZipCity));
+        preview.recipient.innerHTML = recipientLines.join('<br>');
+
+        const infoRows = [];
+        const addInfo = (label, value, alwaysShow) => {
+            if (value || alwaysShow) {
+                infoRows.push(
+                    '<div class="info-row"><span class="info-label">' + escapeHtml(label) + ':</span><span class="info-value">' + escapeHtml(value || '') + '</span></div>'
+                );
+            }
+        };
+
+        if (fields.senderName.value) {
+            infoRows.push('<div class="info-row" style="margin-bottom:3mm"><strong style="font-size:9pt">' + escapeHtml(fields.senderName.value) + '</strong></div>');
+        }
+
+        addInfo('Ihr Zeichen', fields.infoIhrZeichen.value);
+        addInfo('Ihr Schreiben vom', fields.infoIhrSchreiben.value);
+        addInfo('Unser Zeichen', fields.infoUnserZeichen.value);
+        addInfo('Ihr Gesprächspartner', fields.infoAnsprechpartner.value);
+        addInfo('Abteilung', fields.infoAbteilung.value);
+        addInfo('Telefon', fields.infoDurchwahl.value || fields.senderPhone.value);
+        addInfo('Telefax', fields.infoTelefax.value);
+        addInfo('E-Mail', fields.senderEmail.value, true);
+        addInfo('BG-Nummer', fields.infoBgNummer.value);
+        addInfo('Datum', fields.infoDate.value, true);
+        preview.infoBlock.innerHTML = infoRows.join('');
+
+        preview.subject.textContent = fields.letterSubject.value;
+
+        const bodyParts = [];
+        if (fields.letterSalutation.value) {
+            bodyParts.push('<div class="body-salutation">' + escapeHtml(fields.letterSalutation.value) + '</div>');
+        }
+        if (fields.letterBody.value) {
+            bodyParts.push('<div class="body-text">' + textToHtmlLines(fields.letterBody.value) + '</div>');
+        }
+        if (fields.letterClosing.value) {
+            bodyParts.push('<div class="body-closing">' + escapeHtml(fields.letterClosing.value) + '</div>');
+        }
+        if (fields.letterCompany.value) {
+            bodyParts.push('<div class="body-company">' + escapeHtml(fields.letterCompany.value) + '</div>');
+        }
+        var sigLine = [fields.letterZusatz.value, fields.letterSignature.value].filter(Boolean).join(' ');
+        if (sigLine) {
+            bodyParts.push('<div class="body-signature-block">' + escapeHtml(sigLine) + '</div>');
+        }
+        if (fields.letterEnclosures.value) {
+            bodyParts.push('<div class="body-enclosures"><span class="body-enclosures-label">Anlagen:</span><br>' + textToHtmlLines(fields.letterEnclosures.value) + '</div>');
+        }
+        preview.body.innerHTML = bodyParts.join('');
+
+        const footerCols = [fields.footerCol1.value, fields.footerCol2.value, fields.footerCol3.value, fields.footerCol4.value];
+        preview.footer.innerHTML = footerCols.map(function(col) { return '<div class="footer-col">' + textToHtmlLines(col) + '</div>'; }).join('');
+
+        saveState();
+    }
+
+    function setForm(form) {
+        currentForm = form;
+        page.classList.remove('form-a', 'form-b');
+        page.classList.add(form === 'A' ? 'form-a' : 'form-b');
+        btnFormA.classList.toggle('active', form === 'A');
+        btnFormB.classList.toggle('active', form === 'B');
+        document.querySelectorAll('.form-a-info').forEach(function(el) { el.style.display = form === 'A' ? '' : 'none'; });
+        document.querySelectorAll('.form-b-info').forEach(function(el) { el.style.display = form === 'B' ? '' : 'none'; });
+        saveState();
+    }
+
+    var STORAGE_KEY = 'din5008_letter_data';
+
+    function saveState() {
+        var data = { form: currentForm };
+        Object.keys(fields).forEach(function(key) {
+            var el = fields[key];
+            data[key] = el.type === 'checkbox' ? el.checked : el.value;
+        });
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+
+    function loadState() {
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return false;
+            var data = JSON.parse(raw);
+            if (data.form) setForm(data.form);
+            Object.keys(fields).forEach(function(key) {
+                if (data[key] !== undefined) {
+                    var el = fields[key];
+                    if (el.type === 'checkbox') { el.checked = data[key]; }
+                    else { el.value = data[key]; }
+                }
+            });
+            return true;
+        } catch (e) { return false; }
+    }
+
+    function clearAll() {
+        if (!confirm('Alle Felder zurücksetzen? / Сбросить все поля?')) return;
+        Object.keys(fields).forEach(function(key) {
+            var el = fields[key];
+            if (el.type === 'checkbox') { el.checked = true; }
+            else { el.value = ''; }
+        });
+        fields.infoDate.value = formatDate(new Date());
+        updatePreview();
+    }
+
+    function formatDate(date) {
+        var months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+        return date.getDate() + '. ' + months[date.getMonth()] + ' ' + date.getFullYear();
+    }
+
+    // ---- Multi-letter management ----
+    var LETTERS_KEY = 'din5008_saved_letters';
+
+    function getSavedLetters() {
+        try { return JSON.parse(localStorage.getItem(LETTERS_KEY)) || []; }
+        catch(e) { return []; }
+    }
+
+    function saveLetterAs(name) {
+        var data = { form: currentForm };
+        Object.keys(fields).forEach(function(key) {
+            var el = fields[key];
+            data[key] = el.type === 'checkbox' ? el.checked : el.value;
+        });
+        var letters = getSavedLetters();
+        var existing = -1;
+        for (var i = 0; i < letters.length; i++) { if (letters[i].name === name) { existing = i; break; } }
+        var entry = {
+            name: name, data: data, date: new Date().toISOString(),
+            subject: fields.letterSubject.value || '',
+            recipient: fields.recipientName.value || fields.recipientCompany.value || ''
+        };
+        if (existing >= 0) { letters[existing] = entry; } else { letters.unshift(entry); }
+        try { localStorage.setItem(LETTERS_KEY, JSON.stringify(letters)); } catch(e) {}
+    }
+
+    function loadLetter(idx) {
+        var letters = getSavedLetters();
+        if (!letters[idx]) return;
+        var data = letters[idx].data;
+        if (data.form) setForm(data.form);
+        Object.keys(fields).forEach(function(key) {
+            if (data[key] !== undefined) {
+                var el = fields[key];
+                if (el.type === 'checkbox') { el.checked = data[key]; } else { el.value = data[key]; }
+            }
+        });
+        updatePreview();
+    }
+
+    function deleteLetter(idx) {
+        var letters = getSavedLetters();
+        if (!letters[idx]) return;
+        if (!confirm('Brief "' + letters[idx].name + '" l\u00f6schen?')) return;
+        letters.splice(idx, 1);
+        try { localStorage.setItem(LETTERS_KEY, JSON.stringify(letters)); } catch(e) {}
+        renderLettersList();
+    }
+
+    function openModal(id) { document.getElementById(id).hidden = false; }
+    function closeModal(id) { document.getElementById(id).hidden = true; }
+
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.hidden = true; });
+    });
+    document.querySelectorAll('[data-close]').forEach(function(btn) {
+        btn.addEventListener('click', function() { closeModal(btn.dataset.close); });
+    });
+
+    btnSaveAs.addEventListener('click', function() {
+        var nameInput = document.getElementById('save-name');
+        var suggest = fields.letterSubject.value
+            || (fields.recipientName.value ? 'Brief an ' + fields.recipientName.value : '')
+            || 'Brief ' + formatDate(new Date());
+        nameInput.value = suggest;
+        openModal('modal-save');
+        setTimeout(function() { nameInput.focus(); nameInput.select(); }, 100);
+    });
+
+    document.getElementById('btn-save-confirm').addEventListener('click', function() {
+        var name = document.getElementById('save-name').value.trim();
+        if (!name) { document.getElementById('save-name').focus(); return; }
+        saveLetterAs(name);
+        closeModal('modal-save');
+    });
+
+    document.getElementById('save-name').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('btn-save-confirm').click();
+    });
+
+    function renderLettersList() {
+        var list = document.getElementById('letters-list');
+        var letters = getSavedLetters();
+        if (letters.length === 0) {
+            list.innerHTML = '<p class="letters-empty">Keine gespeicherten Briefe <span class="ru" data-en="No saved letters">\u041d\u0435\u0442 \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u044b\u0445 \u043f\u0438\u0441\u0435\u043c</span></p>';
+            return;
+        }
+        list.innerHTML = letters.map(function(l, i) {
+            var d = new Date(l.date);
+            var dateStr = d.getDate() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+            var meta = [l.recipient, l.subject].filter(Boolean).join(' \u2014 ');
+            return '<div class="letter-card"><div class="letter-card-info" data-load="' + i + '"><div class="letter-card-name">' + escapeHtml(l.name) + '</div><div class="letter-card-meta">' + dateStr + (meta ? ' \u00b7 ' + escapeHtml(meta) : '') + '</div></div><div class="letter-card-actions"><button class="letter-card-btn" data-load="' + i + '">Laden</button><button class="letter-card-btn btn-delete" data-delete="' + i + '">\u2715</button></div></div>';
+        }).join('');
+        list.querySelectorAll('[data-load]').forEach(function(el) {
+            el.addEventListener('click', function() { loadLetter(parseInt(el.dataset.load)); closeModal('modal-letters'); });
+        });
+        list.querySelectorAll('[data-delete]').forEach(function(el) {
+            el.addEventListener('click', function(e) { e.stopPropagation(); deleteLetter(parseInt(el.dataset.delete)); });
+        });
+    }
+
+    btnLetters.addEventListener('click', function() { renderLettersList(); openModal('modal-letters'); });
+
+    // ---- PDF Export ----
+    function loadScript(src) {
+        return new Promise(function(resolve, reject) {
+            var s = document.createElement('script');
+            s.src = src; s.onload = resolve; s.onerror = reject;
+            document.head.appendChild(s);
+        });
+    }
+
+    btnPdf.addEventListener('click', async function() {
+        if (typeof html2canvas === 'undefined') {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        }
+        if (typeof jspdf === 'undefined') {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js');
+        }
+        var overlay = document.createElement('div');
+        overlay.className = 'pdf-overlay';
+        overlay.innerHTML = '<div class="pdf-progress"><div class="spinner"></div><br>PDF wird erstellt\u2026</div>';
+        document.body.appendChild(overlay);
+        try {
+            var savedCss = page.style.cssText;
+            page.style.transform = 'none';
+            page.style.transformOrigin = 'top left';
+            await new Promise(function(r) { setTimeout(r, 100); });
+            var canvas = await html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: page.scrollWidth, height: page.scrollHeight });
+            page.style.cssText = savedCss;
+            var pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+            var safeName = (fields.letterSubject.value || 'Brief').replace(/[^a-zA-Z0-9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df\s-]/g, '').trim().replace(/\s+/g, '_');
+            pdf.save((safeName || 'DIN5008_Brief') + '.pdf');
+        } catch(err) { alert('PDF-Fehler: ' + err.message); }
+        finally { overlay.remove(); }
+    });
+
+    function printLetter() { window.print(); }
+
+    /* ---- Print: reset zoom ---- */
+    var savedTransformForPrint = '';
+    window.addEventListener('beforeprint', function() {
+        savedTransformForPrint = page.style.cssText;
+        page.style.transform = 'none';
+        page.style.transformOrigin = 'top left';
+    });
+    window.addEventListener('afterprint', function() {
+        page.style.cssText = savedTransformForPrint;
+    });
+
+    /* ---- Zoom ---- */
+    var ZOOM_STEPS = [25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200];
+    var currentZoom = 100;
+    var fitMode = false;
+    var prevZoom = 100;
+    var zoomInBtn = document.getElementById('zoom-in');
+    var zoomOutBtn = document.getElementById('zoom-out');
+    var zoomFitBtn = document.getElementById('zoom-fit');
+    var zoomLevelEl = document.getElementById('zoom-level');
+
+    function applyZoom(pct) {
+        currentZoom = pct;
+        var scale = pct / 100;
+        page.style.transform = 'scale(' + scale + ')';
+        page.style.transformOrigin = 'top center';
+        zoomLevelEl.textContent = pct + '%';
+        zoomFitBtn.classList.toggle('active', fitMode);
+    }
+
+    function calcFitZoom() {
+        var container = document.querySelector('.preview-scroll');
+        if (!container) return 50;
+        page.style.transform = 'none';
+        var pageRect = page.getBoundingClientRect();
+        var containerRect = container.getBoundingClientRect();
+        var scaleX = (containerRect.width - 40) / pageRect.width;
+        var scaleY = (containerRect.height - 40) / pageRect.height;
+        var scale = Math.min(scaleX, scaleY, 1);
+        return Math.round(scale * 100);
+    }
+
+    function zoomIn() {
+        fitMode = false;
+        var next = ZOOM_STEPS.find(function(s) { return s > currentZoom; });
+        if (next) applyZoom(next);
+    }
+
+    function zoomOut() {
+        fitMode = false;
+        var prev;
+        for (var i = ZOOM_STEPS.length - 1; i >= 0; i--) {
+            if (ZOOM_STEPS[i] < currentZoom) { prev = ZOOM_STEPS[i]; break; }
+        }
+        if (prev) applyZoom(prev);
+    }
+
+    function toggleFit() {
+        if (fitMode) {
+            fitMode = false;
+            applyZoom(prevZoom);
+        } else {
+            prevZoom = currentZoom;
+            fitMode = true;
+            applyZoom(calcFitZoom());
+        }
+    }
+
+    zoomInBtn.addEventListener('click', zoomIn);
+    zoomOutBtn.addEventListener('click', zoomOut);
+    zoomFitBtn.addEventListener('click', toggleFit);
+
+    function scaleA4() {
+        if (fitMode) {
+            applyZoom(calcFitZoom());
+        }
+    }
+
+    Object.keys(fields).forEach(function(key) {
+        var el = fields[key];
+        if (el.type === 'checkbox' || el.tagName === 'SELECT') { el.addEventListener('change', updatePreview); }
+        else { el.addEventListener('input', updatePreview); }
+    });
+
+    btnFormA.addEventListener('click', function() { setForm('A'); });
+    btnFormB.addEventListener('click', function() { setForm('B'); });
+    btnPrint.addEventListener('click', printLetter);
+    btnClear.addEventListener('click', clearAll);
+
+    // Salutation dropdown fills the text input
+    var salutationSelect = document.getElementById('letter-salutation-select');
+    salutationSelect.addEventListener('change', function() {
+        if (salutationSelect.value) {
+            fields.letterSalutation.value = salutationSelect.value;
+            fields.letterSalutation.focus();
+            var len = fields.letterSalutation.value.length;
+            fields.letterSalutation.setSelectionRange(len, len);
+            updatePreview();
+        }
+    });
+
+    // Closing dropdown fills the text input
+    var closingSelect = document.getElementById('letter-closing-select');
+    closingSelect.addEventListener('change', function() {
+        if (closingSelect.value) {
+            fields.letterClosing.value = closingSelect.value;
+            fields.letterClosing.focus();
+            updatePreview();
+        }
+    });
+
+    // ---- Letter Templates ----
+    var LETTER_TEMPLATES = {
+        kuendigung: {
+            subject: 'K\u00fcndigung meines Vertrags',
+            salutation: 'Sehr geehrte Damen und Herren,',
+            body: 'hiermit k\u00fcndige ich meinen Vertrag mit der Vertragsnummer ________ fristgerecht zum n\u00e4chstm\u00f6glichen Zeitpunkt.\n\nBitte senden Sie mir eine schriftliche Best\u00e4tigung der K\u00fcndigung unter Angabe des Beendigungsdatums zu.\n\nSollte sich mein Vertrag bereits stillschweigend verl\u00e4ngert haben, k\u00fcndige ich hilfsweise auch zum n\u00e4chstm\u00f6glichen Zeitpunkt nach der Verl\u00e4ngerung.',
+            closing: 'Mit freundlichen Gr\u00fc\u00dfen'
+        },
+        mahnung: {
+            subject: 'Zahlungserinnerung \u2014 Rechnung Nr. ________',
+            salutation: 'Sehr geehrte Damen und Herren,',
+            body: 'bei der \u00dcberpr\u00fcfung unserer Buchhaltung haben wir festgestellt, dass die oben genannte Rechnung vom ________ \u00fcber ________ \u20ac bis heute nicht beglichen wurde.\n\nDas Zahlungsziel war der ________. Sicherlich handelt es sich um ein Versehen.\n\nWir bitten Sie, den offenen Betrag innerhalb von 14 Tagen auf unser unten genanntes Konto zu \u00fcberweisen.\n\nSollte sich Ihre Zahlung mit diesem Schreiben \u00fcberschnitten haben, betrachten Sie dieses Schreiben bitte als gegenstandslos.',
+            closing: 'Mit freundlichen Gr\u00fc\u00dfen'
+        },
+        widerspruch: {
+            subject: 'Widerspruch gegen Ihren Bescheid vom ________',
+            salutation: 'Sehr geehrte Damen und Herren,',
+            body: 'hiermit lege ich fristgerecht Widerspruch gegen den oben genannten Bescheid ein, den ich am ________ erhalten habe.\n\nMein Aktenzeichen / Versicherungsnummer: ________\n\nBegr\u00fcndung:\n________\n\nIch bitte Sie, den Bescheid zu \u00fcberpr\u00fcfen und aufzuheben.\n\nEine ausf\u00fchrliche Begr\u00fcndung behalte ich mir vor, sofern erforderlich.',
+            closing: 'Mit freundlichen Gr\u00fc\u00dfen'
+        },
+        bewerbung: {
+            subject: 'Bewerbung als ________ \u2014 Ihre Stellenanzeige vom ________',
+            salutation: 'Sehr geehrte Damen und Herren,',
+            body: 'mit gro\u00dfem Interesse habe ich Ihre Stellenanzeige gelesen und bewerbe mich hiermit um die ausgeschriebene Position als ________.\n\nDerzeit bin ich als ________ bei ________ t\u00e4tig und verf\u00fcge \u00fcber ________ Jahre Berufserfahrung in diesem Bereich.\n\nMeine St\u00e4rken liegen insbesondere in:\n\u2022 ________\n\u2022 ________\n\u2022 ________\n\n\u00dcber eine Einladung zu einem pers\u00f6nlichen Gespr\u00e4ch w\u00fcrde ich mich sehr freuen.',
+            closing: 'Mit freundlichen Gr\u00fc\u00dfen',
+            enclosures: 'Lebenslauf\nZeugnisse'
+        },
+        reklamation: {
+            subject: 'Reklamation \u2014 Bestellnummer ________',
+            salutation: 'Sehr geehrte Damen und Herren,',
+            body: 'am ________ habe ich bei Ihnen folgendes Produkt bestellt/erhalten:\n________\n\nLeider muss ich folgende M\u00e4ngel beanstanden:\n________\n\nGem\u00e4\u00df \u00a7 437 BGB bitte ich Sie, innerhalb von 14 Tagen eine der folgenden L\u00f6sungen anzubieten:\n\u2022 Nachbesserung / Reparatur\n\u2022 Lieferung eines mangelfreien Ersatzprodukts\n\u2022 R\u00fcckerstattung des Kaufpreises\n\nBitte teilen Sie mir mit, wie Sie in dieser Angelegenheit verfahren m\u00f6chten.',
+            closing: 'Mit freundlichen Gr\u00fc\u00dfen'
+        }
+    };
+
+    var templateSelect = document.getElementById('letter-template-select');
+    templateSelect.addEventListener('change', function() {
+        var tpl = LETTER_TEMPLATES[templateSelect.value];
+        if (!tpl) return;
+        if (fields.letterSubject.value || fields.letterBody.value) {
+            if (!confirm('Vorhandene Briefdaten \u00fcberschreiben?\n\u041f\u0435\u0440\u0435\u0437\u0430\u043f\u0438\u0441\u0430\u0442\u044c \u0442\u0435\u043a\u0443\u0449\u0435\u0435 \u0441\u043e\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0435 \u043f\u0438\u0441\u044c\u043c\u0430?')) {
+                templateSelect.value = '';
+                return;
+            }
+        }
+        fields.letterSubject.value = tpl.subject || '';
+        fields.letterSalutation.value = tpl.salutation || '';
+        fields.letterBody.value = tpl.body || '';
+        fields.letterClosing.value = tpl.closing || '';
+        if (tpl.enclosures) fields.letterEnclosures.value = tpl.enclosures;
+        templateSelect.value = '';
+        updatePreview();
+        fields.letterSubject.focus();
+    });
+
+    dinToggle.addEventListener('click', function() { dinPanel.classList.toggle('visible'); });
+    document.addEventListener('click', function(e) {
+        if (!dinToggle.contains(e.target) && !dinPanel.contains(e.target)) { dinPanel.classList.remove('visible'); }
+    });
+
+    window.addEventListener('resize', scaleA4);
+
+    // ---- Init ----
+    (function init() {
+        var loaded = loadState();
+        if (!loaded) { setForm('B'); fields.infoDate.value = formatDate(new Date()); }
+        if (!fields.infoDate.value) { fields.infoDate.value = formatDate(new Date()); }
+        updatePreview();
+        requestAnimationFrame(function() {
+            fitMode = true;
+            applyZoom(calcFitZoom());
+        });
+    })();
+})();
+</script>
+</body>
+</html>

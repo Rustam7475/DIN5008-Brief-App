@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb"/>
+      <stop offset="100%" style="stop-color:#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f1f5f9"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rounded rect -->
+  <rect x="0" y="0" width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <!-- A4 paper shadow -->
+  <rect x="272" y="132" width="500" height="700" rx="16" fill="rgba(0,0,0,0.15)"/>
+  <!-- A4 paper -->
+  <rect x="262" y="122" width="500" height="700" rx="16" fill="url(#paper)" stroke="#e2e8f0" stroke-width="2"/>
+  <!-- Letterhead line -->
+  <rect x="440" y="170" width="280" height="8" rx="4" fill="#2563eb" opacity="0.6"/>
+  <!-- Return address -->
+  <rect x="302" y="240" width="200" height="4" rx="2" fill="#94a3b8"/>
+  <!-- Address lines -->
+  <rect x="302" y="280" width="180" height="6" rx="3" fill="#475569"/>
+  <rect x="302" y="298" width="160" height="6" rx="3" fill="#475569"/>
+  <rect x="302" y="316" width="140" height="6" rx="3" fill="#475569"/>
+  <rect x="302" y="334" width="170" height="6" rx="3" fill="#475569"/>
+  <!-- Info block lines (right) -->
+  <rect x="560" y="280" width="160" height="5" rx="2" fill="#94a3b8"/>
+  <rect x="560" y="298" width="140" height="5" rx="2" fill="#94a3b8"/>
+  <rect x="560" y="316" width="150" height="5" rx="2" fill="#94a3b8"/>
+  <rect x="560" y="334" width="130" height="5" rx="2" fill="#94a3b8"/>
+  <!-- Fold mark 1 -->
+  <line x1="290" y1="420" x2="320" y2="420" stroke="#000" stroke-width="2"/>
+  <!-- Subject line -->
+  <rect x="310" y="448" width="300" height="8" rx="4" fill="#1e293b"/>
+  <!-- Body text lines -->
+  <rect x="310" y="480" width="400" height="5" rx="2" fill="#64748b"/>
+  <rect x="310" y="498" width="380" height="5" rx="2" fill="#64748b"/>
+  <rect x="310" y="516" width="410" height="5" rx="2" fill="#64748b"/>
+  <rect x="310" y="534" width="350" height="5" rx="2" fill="#64748b"/>
+  <rect x="310" y="552" width="390" height="5" rx="2" fill="#64748b"/>
+  <rect x="310" y="570" width="370" height="5" rx="2" fill="#64748b"/>
+  <!-- Closing -->
+  <rect x="310" y="610" width="220" height="6" rx="3" fill="#475569"/>
+  <!-- Signature -->
+  <rect x="310" y="650" width="160" height="6" rx="3" fill="#475569"/>
+  <!-- Fold mark 2 -->
+  <line x1="290" y1="680" x2="320" y2="680" stroke="#000" stroke-width="2"/>
+  <!-- Footer line -->
+  <line x1="302" y1="760" x2="722" y2="760" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="302" y="770" width="100" height="4" rx="2" fill="#94a3b8"/>
+  <rect x="420" y="770" width="100" height="4" rx="2" fill="#94a3b8"/>
+  <rect x="540" y="770" width="100" height="4" rx="2" fill="#94a3b8"/>
+  <rect x="660" y="770" width="60" height="4" rx="2" fill="#94a3b8"/>
+  <!-- DIN 5008 text badge -->
+  <rect x="340" y="870" width="344" height="80" rx="40" fill="rgba(255,255,255,0.2)"/>
+  <text x="512" y="924" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="52" font-weight="700" fill="white">DIN 5008</text>
+</svg>

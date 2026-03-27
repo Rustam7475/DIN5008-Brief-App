@@ -1,0 +1,104 @@
+{
+  "name": "din5008-brief-editor",
+  "version": "3.2.0",
+  "description": "DIN 5008 Brief-App — Geschäftsbrief Editor mit Vorlagen",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "author": "DIN 5008 Brief Editor",
+  "license": "MIT",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.din5008.brief-editor",
+    "productName": "DIN 5008 Brief Editor",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "assets/icon.png"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.icns",
+      "identity": null,
+      "extraResources": [
+        {
+          "from": "README.md",
+          "to": "../README.md"
+        }
+      ],
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ]
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 270,
+          "y": 370,
+          "type": "file",
+          "path": "README.md"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 450
+      },
+      "title": "DIN 5008 Brief Editor"
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico"
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [
+        "AppImage"
+      ],
+      "category": "Office"
+    }
+  },
+  "devDependencies": {
+    "electron": "^41.0.2",
+    "electron-builder": "^26.8.1"
+  },
+  "dependencies": {
+    "google-libphonenumber": "^3.2.44"
+  }
+}
