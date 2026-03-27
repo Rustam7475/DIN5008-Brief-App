@@ -270,6 +270,26 @@ a.action-btn {
     background: rgba(37, 99, 235, 0.12);
 }
 
+.letter-action-btn.btn-edit {
+    border-color: #f59e0b;
+    color: #d97706;
+    background: rgba(245, 158, 11, 0.06);
+}
+
+.letter-action-btn.btn-edit:hover {
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.letter-action-btn.btn-cancel {
+    border-color: #ef4444;
+    color: #dc2626;
+    background: rgba(239, 68, 68, 0.06);
+}
+
+.letter-action-btn.btn-cancel:hover {
+    background: rgba(239, 68, 68, 0.12);
+}
+
 .letter-action-btn .ru {
     font-size: 0.62rem;
     font-weight: 400;
@@ -550,6 +570,50 @@ html.dark .ruler .ruler-label {
 .a4-page.form-c4 .fold-mark-2 { display: none; }
 .a4-page.form-c4 .punch-mark  { display: block; border-top-style: dashed; }
 
+/* Envelope window outline — visual indicator (all forms) */
+.envelope-outline {
+    display: none;
+    position: absolute;
+    left: 20mm;
+    width: 85mm;
+    height: 45mm;
+    border: 1.5px dashed #4a90d9;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 5;
+    box-sizing: border-box;
+}
+.envelope-outline::after {
+    position: absolute;
+    top: -16px;
+    left: 0;
+    font-size: 7pt;
+    color: #4a90d9;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+}
+.a4-page.form-a .envelope-outline {
+    display: block;
+    top: 27mm;
+}
+.a4-page.form-a .envelope-outline::after {
+    content: 'Form A ✉ Sichtfenster (27 mm)';
+}
+.a4-page.form-b .envelope-outline {
+    display: block;
+    top: 50mm;
+}
+.a4-page.form-b .envelope-outline::after {
+    content: 'Form B ✉ Sichtfenster (50 mm)';
+}
+.a4-page.form-c4 .envelope-outline {
+    display: block;
+    top: 45mm;
+}
+.a4-page.form-c4 .envelope-outline::after {
+    content: 'C4 ✉ Sichtfenster (45 mm)';
+}
+
 /* In A/B forms: hide punch mark by default (fold marks are enough) */
 .a4-page.form-a .punch-mark { display: none; }
 .a4-page.form-b .punch-mark { display: none; }
@@ -573,8 +637,8 @@ html.dark .ruler .ruler-label {
 }
 
 .a4-page.form-c4 .letterhead {
-    height: 50mm;
-    padding-top: 10mm;
+    height: 45mm;
+    padding-top: 5mm;
 }
 
 .letterhead-name {
@@ -774,7 +838,7 @@ html.dark .sig-label {
 
 .a4-page.form-a .return-address { top: 27mm; }
 .a4-page.form-b .return-address { top: 50mm; }
-.a4-page.form-c4 .return-address { top: 50mm; }
+.a4-page.form-c4 .return-address { top: 45mm; }
 
 /* ---------- Endorsement Zone (Zusatz- und Vermerkzone) ---------- */
 .endorsement-zone {
@@ -791,7 +855,7 @@ html.dark .sig-label {
 
 .a4-page.form-a .endorsement-zone { top: 32mm; }
 .a4-page.form-b .endorsement-zone { top: 55mm; }
-.a4-page.form-c4 .endorsement-zone { top: 55mm; }
+.a4-page.form-c4 .endorsement-zone { top: 50mm; }
 
 /* ---------- Recipient Address ---------- */
 .recipient-address {
@@ -808,7 +872,7 @@ html.dark .sig-label {
 
 .a4-page.form-a .recipient-address { top: 44.7mm; }
 .a4-page.form-b .recipient-address { top: 67.7mm; }
-.a4-page.form-c4 .recipient-address { top: 67.7mm; }
+.a4-page.form-c4 .recipient-address { top: 62.7mm; }
 
 /* ---------- Information Block (right side) ---------- */
 .info-block {
@@ -822,7 +886,7 @@ html.dark .sig-label {
 
 .a4-page.form-a .info-block { top: 32mm; }
 .a4-page.form-b .info-block { top: 55mm; }
-.a4-page.form-c4 .info-block { top: 55mm; }
+.a4-page.form-c4 .info-block { top: 50mm; }
 
 .info-block .info-row {
     margin-bottom: 0.8mm;
@@ -856,7 +920,7 @@ html.dark .sig-label {
 
 .a4-page.form-a .letter-subject { top: 108.4mm; }
 .a4-page.form-b .letter-subject { top: 108.4mm; }
-.a4-page.form-c4 .letter-subject { top: 108.4mm; }
+.a4-page.form-c4 .letter-subject { top: 103.4mm; }
 
 /* ---------- Letter Body ---------- */
 .letter-body {
@@ -872,7 +936,7 @@ html.dark .sig-label {
 
 .a4-page.form-a .letter-body { top: 116.4mm; }
 .a4-page.form-b .letter-body { top: 116.4mm; }
-.a4-page.form-c4 .letter-body { top: 116.4mm; }
+.a4-page.form-c4 .letter-body { top: 111.4mm; }
 
 .letter-body .body-salutation {
     margin-bottom: 2mm;
@@ -1176,6 +1240,11 @@ html.dark .sig-label {
     /* A/B: hide punch mark in print */
     .a4-page.form-a .punch-mark,
     .a4-page.form-b .punch-mark {
+        display: none !important;
+    }
+
+    /* Hide envelope outline in print */
+    .envelope-outline {
         display: none !important;
     }
 

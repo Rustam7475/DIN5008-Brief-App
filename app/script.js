@@ -12,6 +12,7 @@
     const loadId = params.get('load') || '';
     let currentCategory = templateKey || 'free';
     let currentLetterId = null;
+    let currentLetterName = null;
 
     // ---- DOM References ----
     const page = document.getElementById('a4-page');
@@ -313,6 +314,7 @@
             el.style.display = form === 'C4' ? '' : 'none';
         });
         saveState();
+        if (currentLetterId) UnsavedGuard.mark();
     }
 
     // ---- LocalStorage Persistence (current working copy) ----
@@ -385,6 +387,9 @@
             else el.value = '';
         });
         sigPos = { x: null, y: null };
+        currentLetterId = null;
+        currentLetterName = null;
+        updateEditButton();
         fields.infoDate.value = formatDateDE(new Date());
         if (templateKey && LETTER_TEMPLATES[templateKey]) {
             applyTemplate(templateKey);
@@ -535,7 +540,8 @@
     btnSaveAs.addEventListener('click', () => {
         const nameInput = document.getElementById('save-name');
         const catSelect = document.getElementById('save-category');
-        const suggest = fields.letterSubject.value
+        const suggest = currentLetterName
+            || fields.letterSubject.value
             || (fields.recipientName.value ? 'Brief an ' + fields.recipientName.value : '')
             || 'Brief ' + formatDateDE(new Date());
         nameInput.value = suggest;
@@ -581,7 +587,9 @@
         const data = getFieldData();
         const entry = LettersManager.save(name, cat, data);
         currentLetterId = entry.id;
+        currentLetterName = name;
         currentCategory = cat;
+        updateEditButton();
         UnsavedGuard.clear();
         closeModal('modal-save');
 
@@ -661,6 +669,7 @@
         if (!letter) return;
         applyFieldData(letter.data);
         currentLetterId = letter.id;
+        currentLetterName = letter.name;
         currentCategory = letter.category || 'free';
 
         // If saved letter has empty body but a template exists for this category,
@@ -672,6 +681,7 @@
         showTplBodyActions(currentCategory !== 'free' ? currentCategory : null);
         updatePreview();
         UnsavedGuard.clear();
+        updateEditButton();
     }
 
     btnLetters.addEventListener('click', () => {
@@ -861,6 +871,32 @@
     btnFormA.addEventListener('click', () => setForm('A'));
     btnFormB.addEventListener('click', () => setForm('B'));
     btnFormC4.addEventListener('click', () => setForm('C4'));
+
+    // ---- Edit / Cancel Buttons (for loaded letters) ----
+    const btnEdit = document.getElementById('btn-edit');
+    const btnCancelEdit = document.getElementById('btn-cancel-edit');
+    function updateEditButton() {
+        const hasLetter = !!currentLetterId;
+        const isDirty = UnsavedGuard.isDirty();
+        if (btnEdit) btnEdit.style.display = (hasLetter && !isDirty) ? '' : 'none';
+        if (btnCancelEdit) btnCancelEdit.style.display = (hasLetter && isDirty) ? '' : 'none';
+    }
+    if (btnEdit) {
+        btnEdit.style.display = 'none';
+        btnEdit.addEventListener('click', () => {
+            UnsavedGuard.mark();
+            updateEditButton();
+        });
+    }
+    if (btnCancelEdit) {
+        btnCancelEdit.style.display = 'none';
+        btnCancelEdit.addEventListener('click', () => {
+            if (!currentLetterId) return;
+            if (!confirm(t('cancel_edit_confirm'))) return;
+            loadLetterById(currentLetterId);
+        });
+    }
+    UnsavedGuard._onChange = updateEditButton;
 
     // ---- Dropdowns ----
     const salutationSelect = document.getElementById('letter-salutation-select');

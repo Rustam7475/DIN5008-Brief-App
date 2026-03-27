@@ -69,6 +69,8 @@
         <!-- Letter management buttons -->
         <div class="letter-actions">
             <button id="btn-letters" class="letter-action-btn" data-i18n="btn_my_letters_icon">📂 Meine Briefe</button>
+            <button id="btn-edit" class="letter-action-btn btn-edit" style="display:none" data-i18n="btn_edit_icon">✏️ Bearbeiten</button>
+            <button id="btn-cancel-edit" class="letter-action-btn btn-cancel" style="display:none" data-i18n="btn_cancel_icon">✖ Abbrechen</button>
             <button id="btn-save-as" class="letter-action-btn btn-save" data-i18n="btn_save_icon">💾 Speichern</button>
         </div>
 
@@ -372,6 +374,9 @@
                 <hr class="mark fold-mark-2">
                 <hr class="mark punch-mark">
 
+                <!-- Envelope window outline (visible in all forms) -->
+                <div class="envelope-outline"></div>
+
                 <!-- Letterhead area (top, for logo etc.) -->
                 <div class="letterhead" id="preview-letterhead">
                     <img id="p-letterhead-logo" class="letterhead-logo" style="display:none" alt="">
@@ -427,7 +432,7 @@
                     <tr><td>Rechter Rand</td><td>≥ 20 mm</td></tr>
                     <tr class="form-a-info"><td>Anschriftfeld (A)</td><td>20 mm links, 27 mm oben</td></tr>
                     <tr class="form-b-info"><td>Anschriftfeld (B)</td><td>20 mm links, 45 mm oben</td></tr>
-                    <tr class="form-c4-info"><td>Anschriftfeld (C4)</td><td>20 mm links, 45 mm oben</td></tr>
+                    <tr class="form-c4-info"><td>Anschriftfeld (C4)</td><td>20 mm links, 45 mm oben (5 mm höher als Form B)</td></tr>
                     <tr><td>Anschriftfeld Größe</td><td>85 × 45 mm</td></tr>
                     <tr><td>Informationsblock</td><td>ab 125 mm links</td></tr>
                     <tr class="form-a-info"><td>Falzmarke 1 (A)</td><td>87 mm</td></tr>

@@ -446,12 +446,16 @@ async function exportPDF(pageEl, filename, meta) {
         const saved = pageEl.style.cssText;
         pageEl.style.transform = 'none';
         pageEl.style.transformOrigin = 'top left';
+        // Hide envelope outline for PDF capture
+        const outline = pageEl.querySelector('.envelope-outline');
+        if (outline) outline.style.display = 'none';
         await new Promise(r => setTimeout(r, 100));
         const canvas = await html2canvas(pageEl, {
             scale: 2, useCORS: true, backgroundColor: '#ffffff',
             width: pageEl.scrollWidth, height: pageEl.scrollHeight
         });
         pageEl.style.cssText = saved;
+        if (outline) outline.style.display = '';
         const { jsPDF } = jspdf;
         const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
@@ -488,18 +492,21 @@ const UnsavedGuard = {
     _dirty: false,
     _hasUserEdits: false,
     _initializing: false,
+    _onChange: null,
     mark() {
         if (this._initializing) return;
         this._dirty = true;
         this._hasUserEdits = true;
         this.updateIndicator();
+        if (this._onChange) this._onChange();
     },
     markNew() {
         this._dirty = true;
         this._hasUserEdits = false;
         this.updateIndicator();
+        if (this._onChange) this._onChange();
     },
-    clear() { this._dirty = false; this._hasUserEdits = false; this.updateIndicator(); },
+    clear() { this._dirty = false; this._hasUserEdits = false; this.updateIndicator(); if (this._onChange) this._onChange(); },
     isDirty() { return this._dirty; },
     shouldBlock() { return this._dirty && this._hasUserEdits; },
     confirmLeave() {
@@ -674,6 +681,7 @@ const I18N = {
     contact_saved:   { de: 'Kontakt gespeichert! ✓',      ru: 'Контакт сохранён! ✓',  en: 'Contact saved! ✓' },
     overwrite_confirm: { de: 'Vorhandene Briefdaten überschreiben?', ru: 'Перезаписать текущее содержание письма?', en: 'Overwrite existing letter data?' },
     unsaved_confirm: { de: 'Ungespeicherte Änderungen gehen verloren. Fortfahren?', ru: 'Несохранённые изменения будут потеряны. Продолжить?', en: 'Unsaved changes will be lost. Continue?' },
+    cancel_edit_confirm: { de: 'Alle Änderungen verwerfen und den letzten gespeicherten Stand wiederherstellen?', ru: 'Отменить все изменения и восстановить последнюю сохранённую версию?', en: 'Discard all changes and restore last saved version?' },
     pdf_loading:     { de: 'PDF-Bibliotheken werden noch geladen…', ru: 'PDF библиотеки загружаются…', en: 'PDF libraries are still loading…' },
     pdf_error:       { de: 'PDF-Fehler: ',       ru: 'Ошибка PDF: ',       en: 'PDF error: ' },
     pdf_creating:    { de: 'PDF wird erstellt…',  ru: 'Создаётся PDF…',     en: 'Creating PDF…' },
@@ -743,6 +751,8 @@ const I18N = {
 
     // Editor letter mgmt buttons
     btn_my_letters_icon: { de: '📂 Meine Briefe',  ru: '📂 Мои письма',   en: '📂 My Letters' },
+    btn_edit_icon:       { de: '✏️ Bearbeiten',     ru: '✏️ Редактировать', en: '✏️ Edit' },
+    btn_cancel_icon:     { de: '✖ Abbrechen',       ru: '✖ Отмена',        en: '✖ Cancel' },
     btn_save_icon:       { de: '💾 Speichern',      ru: '💾 Сохранить',    en: '💾 Save' },
 
     // Search
