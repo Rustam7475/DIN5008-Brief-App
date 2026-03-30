@@ -1111,12 +1111,25 @@
     // ---- Email (mailto) ----
     const btnEmail = document.getElementById('btn-email');
     if (btnEmail) {
+        let emailSending = false;
         btnEmail.addEventListener('click', () => {
-            const to = fields.senderEmail.value || '';
+            if (emailSending) return;
+            emailSending = true;
+            setTimeout(() => { emailSending = false; }, 2000);
+            const to = (document.getElementById('recipient-email') || {}).value || '';
             const subject = fields.letterSubject.value || '';
             const body = fields.letterBody.value || '';
-            const mailto = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-            window.open(mailto);
+            const mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            if (currentLetterId) {
+                LettersManager.setStatus(currentLetterId, 'sent');
+            }
+            if (window.electronAPI && window.electronAPI.openExternal) {
+                window.electronAPI.openExternal(mailto).then(() => {
+                    window.location.href = 'index.html';
+                });
+            } else {
+                window.open(mailto, '_blank');
+            }
         });
     }
 
